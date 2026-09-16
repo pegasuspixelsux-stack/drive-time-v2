@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Gauge, Calendar, Zap, Fuel, ArrowUpRight } from "lucide-react";
 import type { Car } from "@/data/cars";
@@ -41,8 +42,8 @@ export function CarCard({ car }: { car: Car }) {
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(8,16,60,0.65),transparent_60%)]" />
 
-      <button
-        type="button"
+      <Link
+        href={`/inventory/${car.id}`}
         aria-label="View details"
         className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors duration-200 ease-out group-hover:border-foreground/40 group-hover:bg-foreground group-hover:text-accent-foreground"
       >
@@ -50,7 +51,7 @@ export function CarCard({ car }: { car: Car }) {
           size={16}
           className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
         />
-      </button>
+      </Link>
 
       <div className="relative aspect-square w-2/5 flex-shrink-0 self-start overflow-hidden bg-surface-2 sm:aspect-auto sm:w-1/2 sm:self-stretch">
         <Image
