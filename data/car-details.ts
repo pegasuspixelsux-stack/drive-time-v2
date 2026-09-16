@@ -28,20 +28,24 @@ const SUPPLEMENT_POOL = [
   "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&w=1600&q=80",
 ];
 
-function galleryFor(primary: string, offset: number): CarDetailImage[] {
+function galleryFor(
+  primary: string,
+  offset: number,
+  label: string,
+): CarDetailImage[] {
   return [
     { src: primary, alt: "Front three-quarter view" },
     {
       src: SUPPLEMENT_POOL[offset % 4],
-      alt: "Side profile in motion",
+      alt: `Additional exterior view of the ${label} (1 of 3)`,
     },
     {
       src: SUPPLEMENT_POOL[(offset + 1) % 4],
-      alt: "Cabin and interior detail",
+      alt: `Additional exterior view of the ${label} (2 of 3)`,
     },
     {
       src: SUPPLEMENT_POOL[(offset + 2) % 4],
-      alt: "Rear three-quarter view",
+      alt: `Additional exterior view of the ${label} (3 of 3)`,
     },
   ];
 }
@@ -51,6 +55,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
       0,
+      "Land Rover Range Rover Sport",
     ),
     editorial: {
       headline: "Command Every Terrain, Without Raising Your Pulse",
@@ -98,6 +103,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1600&q=80",
       1,
+      "BMW M5",
     ),
     editorial: {
       headline: "The Business Sedan That Lies About Its Day Job",
@@ -145,6 +151,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80",
       2,
+      "Porsche Panamera",
     ),
     editorial: {
       headline: "Precision Engineering, Dressed for Any Occasion",
@@ -192,6 +199,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1600&q=80",
       3,
+      "Tesla Roadster",
     ),
     editorial: {
       headline: "The Future of Speed, Already Here",
@@ -239,6 +247,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1600&q=80",
       0,
+      "Honda CR-V",
     ),
     editorial: {
       headline: "The Quiet Confidence of Doing Everything Right",
@@ -286,6 +295,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1600&q=80",
       1,
+      "Nissan GT-R",
     ),
     editorial: {
       headline: "Godzilla, Still Undefeated",
@@ -333,6 +343,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1600&q=80",
       2,
+      "Ford Expedition",
     ),
     editorial: {
       headline: "Room for Everyone, Without Giving Up an Inch of Capability",
@@ -380,6 +391,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1600&q=80",
       3,
+      "Mercedes-AMG GT R",
     ),
     editorial: {
       headline: "Built on a Track, Refined for the Road",
@@ -427,6 +439,7 @@ export const carDetails: Record<string, CarDetail> = {
     images: galleryFor(
       "https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?auto=format&fit=crop&w=1600&q=80",
       0,
+      "Lamborghini Aventador",
     ),
     editorial: {
       headline: "The Last of an Era, Loud About It",
