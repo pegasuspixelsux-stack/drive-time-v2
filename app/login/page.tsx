@@ -17,8 +17,8 @@ export default function LoginPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors: { email?: string; password?: string } = {};
-    if (!email.trim()) nextErrors.email = "Email is required";
-    if (!password.trim()) nextErrors.password = "Password is required";
+    if (!email.trim()) nextErrors.email = "El correo electrónico es obligatorio";
+    if (!password.trim()) nextErrors.password = "La contraseña es obligatoria";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
           className="glass w-fit rounded-full px-4 py-1.5 text-[0.8rem] font-medium text-foreground"
         >
-          Sales Platform
+          Plataforma de Ventas
         </motion.span>
 
         <motion.h1
@@ -81,16 +81,16 @@ export default function LoginPage() {
               DriveTime
             </p>
             <h2 className="mt-4 text-2xl font-semibold text-foreground">
-              Sign in to your account
+              Iniciá sesión en tu cuenta
             </h2>
             <p className="mt-2 text-[0.9rem] text-muted">
-              Enter your credentials to access the management dashboard.
+              Ingresá tus credenciales para acceder al panel de administración.
             </p>
           </motion.div>
 
           <motion.form variants={fadeUp} onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-[0.8rem] font-medium text-muted">Email</label>
+              <label className="text-[0.8rem] font-medium text-muted">Correo electrónico</label>
               <input
                 type="email"
                 value={email}
@@ -103,12 +103,12 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <label className="text-[0.8rem] font-medium text-muted">Password</label>
+                <label className="text-[0.8rem] font-medium text-muted">Contraseña</label>
                 <Link
                   href="#"
                   className="text-[0.78rem] text-muted underline decoration-border-strong underline-offset-4 hover:text-foreground"
                 >
-                  Forgot my password?
+                  ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <input
@@ -128,7 +128,7 @@ export default function LoginPage() {
               transition={{ duration: 0.15, ease: "easeOut" }}
               className="mt-2 flex h-12 items-center justify-center rounded-xl bg-foreground text-[0.9rem] font-medium text-accent-foreground"
             >
-              Sign In
+              Iniciar sesión
             </motion.button>
           </motion.form>
 

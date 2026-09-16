@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DriveTime — Find Your Next Precision Machine",
+  title: "DriveTime — Encontrá tu próxima máquina de precisión",
   description:
-    "DriveTime is a high-end dealership offering a curated selection of precision-engineered sedans, SUVs, and performance vehicles.",
+    "DriveTime es una concesionaria de alta gama que ofrece una selección curada de sedanes, SUVs y vehículos de alto rendimiento diseñados con precisión.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
