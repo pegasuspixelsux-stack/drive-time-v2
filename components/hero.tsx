@@ -40,7 +40,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex h-[50vh] min-h-[420px] w-full items-end overflow-hidden bg-background sm:h-[80vh] sm:min-h-[580px]"
+      className="relative flex h-[50vh] min-h-[420px] w-full items-end overflow-hidden bg-background sm:h-[90vh] sm:min-h-[640px]"
     >
       <AnimatePresence initial={false}>
         <motion.div

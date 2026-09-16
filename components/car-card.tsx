@@ -38,10 +38,8 @@ export function CarCard({ car }: { car: Car }) {
   return (
     <motion.article
       variants={fadeUp}
-      className="group relative flex flex-row overflow-hidden rounded-2xl border border-border bg-transparent transition-colors duration-300 hover:border-border-strong"
+      className="group relative flex flex-row overflow-hidden rounded-2xl bg-transparent"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(8,16,60,0.65),transparent_60%)]" />
-
       <Link
         href={`/inventory/${car.id}`}
         aria-label="View details"
