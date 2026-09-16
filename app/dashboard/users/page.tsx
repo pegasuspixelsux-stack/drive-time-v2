@@ -1,0 +1,151 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Plus, Trash2 } from "lucide-react";
+import { Modal } from "@/components/dashboard/modal";
+import { StatusPill } from "@/components/dashboard/status-pill";
+import { DashboardField, dashboardInputClass } from "@/components/dashboard/form-field";
+import { useLocalStorage } from "@/lib/use-local-storage";
+import { seedUsers, type TeamRole, type TeamUser } from "@/lib/dashboard-data";
+import { fadeUp, staggerContainer } from "@/lib/motion";
+
+const ROLES: TeamRole[] = ["Admin", "Manager", "Sales"];
+
+export default function UsersPage() {
+  const [users, setUsers] = useLocalStorage("dt_users", seedUsers);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [draft, setDraft] = useState({ name: "", email: "", role: "Sales" as TeamRole });
+
+  const initials = (name: string) => name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+
+  const updateRole = (id: string, role: TeamRole) => {
+    setUsers((prev) => prev.map((user) => (user.id === id ? { ...user, role } : user)));
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirmDeleteId !== id) {
+      setConfirmDeleteId(id);
+      return;
+    }
+    setUsers((prev) => prev.filter((user) => user.id !== id));
+    setConfirmDeleteId(null);
+  };
+
+  const handleInvite = () => {
+    if (!draft.name.trim() || !draft.email.trim()) return;
+    const newUser: TeamUser = {
+      id: `user-${Date.now()}`,
+      name: draft.name.trim(),
+      email: draft.email.trim(),
+      role: draft.role,
+      status: "Invited",
+    };
+    setUsers((prev) => [...prev, newUser]);
+    setDraft({ name: "", email: "", role: "Sales" });
+    setModalOpen(false);
+  };
+
+  return (
+    <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-6">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Users</h1>
+          <p className="mt-1 text-sm text-slate-500">{users.length} team members.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+        >
+          <Plus size={16} />
+          Invite User
+        </button>
+      </div>
+
+      <motion.div variants={fadeUp} className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <table className="w-full min-w-[640px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-slate-200 text-xs font-medium uppercase tracking-wide text-slate-500">
+              <th className="px-5 py-3">Member</th>
+              <th className="px-5 py-3">Role</th>
+              <th className="px-5 py-3">Status</th>
+              <th className="px-5 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td className="px-5 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                      {initials(user.name)}
+                    </span>
+                    <div>
+                      <p className="font-medium text-slate-900">{user.name}</p>
+                      <p className="text-xs text-slate-500">{user.email}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-5 py-3">
+                  <select
+                    value={user.role}
+                    onChange={(event) => updateRole(user.id, event.target.value as TeamRole)}
+                    className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 focus-visible:outline-none"
+                  >
+                    {ROLES.map((role) => (
+                      <option key={role} value={role}>{role}</option>
+                    ))}
+                  </select>
+                </td>
+                <td className="px-5 py-3">
+                  <StatusPill label={user.status} tone={user.status === "Active" ? "green" : "slate"} />
+                </td>
+                <td className="px-5 py-3 text-right">
+                  <button
+                    type="button"
+                    aria-label="Remove user"
+                    onClick={() => handleDelete(user.id)}
+                    className={`inline-flex h-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${
+                      confirmDeleteId === user.id
+                        ? "bg-red-600 text-white hover:bg-red-700"
+                        : "text-slate-500 hover:bg-red-50 hover:text-red-600"
+                    }`}
+                  >
+                    {confirmDeleteId === user.id ? "Confirm?" : <Trash2 size={15} />}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </motion.div>
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Invite User">
+        <div className="flex flex-col gap-4">
+          <DashboardField label="Full Name">
+            <input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className={dashboardInputClass} />
+          </DashboardField>
+          <DashboardField label="Email">
+            <input type="email" value={draft.email} onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))} className={dashboardInputClass} />
+          </DashboardField>
+          <DashboardField label="Role">
+            <select value={draft.role} onChange={(e) => setDraft((d) => ({ ...d, role: e.target.value as TeamRole }))} className={dashboardInputClass}>
+              {ROLES.map((role) => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </select>
+          </DashboardField>
+          <button
+            type="button"
+            onClick={handleInvite}
+            className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+          >
+            Send Invite
+          </button>
+        </div>
+      </Modal>
+    </motion.div>
+  );
+}
