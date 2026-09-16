@@ -47,7 +47,7 @@ export function WhyChooseUs() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-balance text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl"
+            className="text-balance text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl"
           >
             Driven by Quality, Defined by Trust
           </motion.h2>

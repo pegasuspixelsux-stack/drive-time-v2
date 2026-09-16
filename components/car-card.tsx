@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Gauge, Settings2, Zap, Fuel, ArrowUpRight } from "lucide-react";
+import { Gauge, Calendar, Zap, Fuel, ArrowUpRight } from "lucide-react";
 import type { Car } from "@/data/cars";
 import { fadeUp } from "@/lib/motion";
 
@@ -12,7 +12,24 @@ const currency = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
+const currencyPrecise = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+});
+
 const mileageFormat = new Intl.NumberFormat("en-US");
+
+const ESTIMATE_APR = 6.5;
+const ESTIMATE_TERM_MONTHS = 60;
+const ESTIMATE_DOWN_RATE = 0.1;
+
+function estimateMonthlyPayment(price: number) {
+  const principal = price * (1 - ESTIMATE_DOWN_RATE);
+  const monthlyRate = ESTIMATE_APR / 100 / 12;
+  const factor = Math.pow(1 + monthlyRate, ESTIMATE_TERM_MONTHS);
+  return (principal * (monthlyRate * factor)) / (factor - 1);
+}
 
 export function CarCard({ car }: { car: Car }) {
   const FuelIcon = car.fuelType === "Electric" ? Zap : Fuel;
@@ -20,43 +37,54 @@ export function CarCard({ car }: { car: Car }) {
   return (
     <motion.article
       variants={fadeUp}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-300 hover:border-border-strong"
+      className="group relative flex flex-row overflow-hidden rounded-2xl border border-border bg-transparent transition-colors duration-300 hover:border-border-strong"
     >
-      <div className="relative h-56 w-full overflow-hidden bg-surface-2">
+      <button
+        type="button"
+        aria-label="View details"
+        className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors duration-200 ease-out group-hover:border-foreground/40 group-hover:bg-foreground group-hover:text-accent-foreground"
+      >
+        <ArrowUpRight
+          size={16}
+          className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        />
+      </button>
+
+      <div className="relative w-2/5 flex-shrink-0 overflow-hidden bg-surface-2 sm:w-1/2">
         <Image
           src={car.image}
           alt={`${car.year} ${car.make} ${car.model} ${car.trim}`}
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 640px) 25vw, 40vw"
           className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.08]"
         />
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-surface/90 to-transparent" />
-        <span className="glass absolute left-4 top-4 rounded-full px-3 py-1 text-[0.75rem] font-medium text-foreground">
+        <span className="glass absolute left-3 top-3 rounded-full px-3 py-1 text-[0.75rem] font-medium text-foreground">
           {car.bodyType}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-[1.05rem] font-semibold leading-tight text-foreground">
-              {car.year} {car.make} {car.model}
-            </h3>
-            <p className="mt-0.5 text-[0.85rem] text-muted">{car.trim}</p>
+        <div>
+          <h3 className="text-[1.05rem] font-semibold leading-tight text-foreground">
+            {car.make} {car.model}
+          </h3>
+          <div className="mt-0.5 flex items-center gap-1.5 text-[0.85rem] text-muted">
+            <span
+              className="h-3 w-3 flex-shrink-0 rounded-full border border-border-strong"
+              style={{ backgroundColor: car.colorHex }}
+            />
+            <span>{car.color}</span>
           </div>
-          <p className="whitespace-nowrap text-[1.05rem] font-semibold text-foreground">
-            {currency.format(car.price)}
-          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-2 border-t border-border pt-4 text-[0.78rem] text-muted">
           <div className="flex items-center gap-1.5">
-            <Gauge size={14} />
-            <span>{mileageFormat.format(car.mileage)} mi</span>
+            <Calendar size={14} />
+            <span>{car.year}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Settings2 size={14} />
-            <span>{car.transmission.split(" ")[0]}</span>
+            <Gauge size={14} />
+            <span>{mileageFormat.format(car.mileage)} km</span>
           </div>
           <div className="flex items-center gap-1.5">
             <FuelIcon size={14} />
@@ -64,16 +92,14 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="mt-auto flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border-strong text-[0.85rem] font-medium text-foreground transition-colors duration-200 ease-out group-hover:border-foreground/40 group-hover:bg-foreground group-hover:text-accent-foreground"
-        >
-          View Details
-          <ArrowUpRight
-            size={15}
-            className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          />
-        </button>
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
+          <p className="whitespace-nowrap text-[0.8rem] text-muted">
+            {currency.format(car.price)}
+          </p>
+          <p className="text-[1.3rem] font-semibold leading-none text-foreground">
+            {currencyPrecise.format(estimateMonthlyPayment(car.price))}/mo
+          </p>
+        </div>
       </div>
     </motion.article>
   );

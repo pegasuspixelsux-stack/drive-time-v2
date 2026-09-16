@@ -45,7 +45,7 @@ export function FinanceCalculator() {
   }, [principal, interestRate, termMonths]);
 
   return (
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-7">
         <RangeSlider
           label="Vehicle Price"
