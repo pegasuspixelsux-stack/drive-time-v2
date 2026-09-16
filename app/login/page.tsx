@@ -81,10 +81,10 @@ export default function LoginPage() {
               DriveTime
             </p>
             <h2 className="mt-4 text-2xl font-semibold text-foreground">
-              Iniciá sesión en tu cuenta
+              Inicia sesión en tu cuenta
             </h2>
             <p className="mt-2 text-[0.9rem] text-muted">
-              Ingresá tus credenciales para acceder al panel de administración.
+              Ingresa tus credenciales para acceder al panel de administración.
             </p>
           </motion.div>
 
