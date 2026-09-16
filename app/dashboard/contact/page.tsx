@@ -75,7 +75,7 @@ export default function ContactPage() {
         </ul>
       </motion.div>
 
-      <Modal open={active !== null} onClose={() => setActiveId(null)} title={active?.subject ?? ""}>
+      <Modal open={active !== null} onClose={() => { setActiveId(null); setConfirmDeleteId(null); }} title={active?.subject ?? ""}>
         {active && (
           <div className="flex flex-col gap-4">
             <div>
