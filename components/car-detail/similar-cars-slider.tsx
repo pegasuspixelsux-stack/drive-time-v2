@@ -26,7 +26,7 @@ export function SimilarCarsSlider({ cars }: { cars: Car[] }) {
       className="mx-auto max-w-[1000px] px-6 py-14 sm:px-8"
     >
       <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">
-        Similar Vehicles
+        Vehículos similares
       </h2>
       <div className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
         {cars.map((car) => (

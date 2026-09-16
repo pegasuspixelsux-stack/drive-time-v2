@@ -23,9 +23,9 @@ const EMPTY_DRAFT: InquiryDraft = { name: "", email: "", phone: "", message: "" 
 function buildWhatsAppUrl(car: Car, draft: InquiryDraft) {
   const carLabel = `${car.year} ${car.make} ${car.model}`;
   const lines = [
-    `Hi, I'm interested in the ${carLabel}.`,
-    draft.name && `My name is ${draft.name}.`,
-    draft.email && `Email: ${draft.email}`,
+    `Hola, me interesa el ${carLabel}.`,
+    draft.name && `Mi nombre es ${draft.name}.`,
+    draft.email && `Correo electrónico: ${draft.email}`,
     draft.message,
   ].filter(Boolean);
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join(" "))}`;
@@ -38,9 +38,9 @@ export function CarInquiryForm({ car }: { car: Car }) {
 
   const validate = () => {
     const nextErrors: Partial<Record<keyof InquiryDraft, string>> = {};
-    if (!draft.name.trim()) nextErrors.name = "Name is required";
-    if (!draft.email.trim()) nextErrors.email = "Email is required";
-    if (!draft.message.trim()) nextErrors.message = "Message is required";
+    if (!draft.name.trim()) nextErrors.name = "El nombre es obligatorio";
+    if (!draft.email.trim()) nextErrors.email = "El correo electrónico es obligatorio";
+    if (!draft.message.trim()) nextErrors.message = "El mensaje es obligatorio";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -70,11 +70,11 @@ export function CarInquiryForm({ car }: { car: Car }) {
             <CheckCircle2 size={22} />
           </span>
           <h3 className="text-[1.05rem] font-semibold text-zinc-900">
-            Inquiry received
+            Consulta recibida
           </h3>
           <p className="text-[0.9rem] text-zinc-500">
-            An advisor will follow up about the {car.year} {car.make} {car.model}{" "}
-            shortly.
+            Un asesor se pondrá en contacto en breve sobre el {car.year} {car.make}{" "}
+            {car.model}.
           </p>
           <button
             type="button"
@@ -84,7 +84,7 @@ export function CarInquiryForm({ car }: { car: Car }) {
             }}
             className="mt-2 text-[0.85rem] font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4"
           >
-            Send another inquiry
+            Enviar otra consulta
           </button>
         </div>
       </motion.div>
@@ -101,16 +101,16 @@ export function CarInquiryForm({ car }: { car: Car }) {
     >
       <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-8">
         <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">
-          Interested in this vehicle?
+          ¿Te interesa este vehículo?
         </h2>
         <p className="mt-2 text-[0.9rem] text-zinc-500">
-          Send an inquiry and an advisor will get back to you.
+          Envía tu consulta y un asesor se pondrá en contacto contigo.
         </p>
 
         <form onSubmit={handleEmailSubmit} className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <label className="text-[0.8rem] font-medium text-zinc-600">Name</label>
+              <label className="text-[0.8rem] font-medium text-zinc-600">Nombre</label>
               <input
                 value={draft.name}
                 onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
@@ -120,7 +120,7 @@ export function CarInquiryForm({ car }: { car: Car }) {
               {errors.name && <p className="text-[0.78rem] text-red-500">{errors.name}</p>}
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[0.8rem] font-medium text-zinc-600">Email</label>
+              <label className="text-[0.8rem] font-medium text-zinc-600">Correo electrónico</label>
               <input
                 type="email"
                 value={draft.email}
@@ -133,7 +133,7 @@ export function CarInquiryForm({ car }: { car: Car }) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[0.8rem] font-medium text-zinc-600">Phone</label>
+            <label className="text-[0.8rem] font-medium text-zinc-600">Teléfono</label>
             <input
               type="tel"
               value={draft.phone}
@@ -144,11 +144,11 @@ export function CarInquiryForm({ car }: { car: Car }) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[0.8rem] font-medium text-zinc-600">Message</label>
+            <label className="text-[0.8rem] font-medium text-zinc-600">Mensaje</label>
             <textarea
               value={draft.message}
               onChange={(e) => setDraft((d) => ({ ...d, message: e.target.value }))}
-              placeholder={`I'd like to know more about the ${car.year} ${car.make} ${car.model}...`}
+              placeholder={`Me gustaría saber más sobre el ${car.year} ${car.make} ${car.model}...`}
               rows={4}
               className={`${fieldClass} h-auto resize-none py-3`}
             />
@@ -166,7 +166,7 @@ export function CarInquiryForm({ car }: { car: Car }) {
               className="flex h-12 items-center justify-center gap-2 rounded-xl bg-zinc-900 text-[0.9rem] font-medium text-white transition-colors hover:bg-zinc-800"
             >
               <Send size={16} />
-              Submit by Email
+              Enviar por email
             </motion.button>
             <motion.button
               type="button"
@@ -177,7 +177,7 @@ export function CarInquiryForm({ car }: { car: Car }) {
               className="flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 text-[0.9rem] font-medium text-white transition-colors hover:bg-emerald-700"
             >
               <MessageCircle size={16} />
-              Submit by WhatsApp
+              Enviar por WhatsApp
             </motion.button>
           </div>
         </form>

@@ -58,7 +58,7 @@ export function CarSlideshow({ images }: { images: CarDetailImage[] }) {
           <>
             <button
               type="button"
-              aria-label="Previous photo"
+              aria-label="Foto anterior"
               onClick={() => goTo(index - 1)}
               className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-md transition-transform duration-200 hover:scale-105"
             >
@@ -66,7 +66,7 @@ export function CarSlideshow({ images }: { images: CarDetailImage[] }) {
             </button>
             <button
               type="button"
-              aria-label="Next photo"
+              aria-label="Foto siguiente"
               onClick={() => goTo(index + 1)}
               className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-md transition-transform duration-200 hover:scale-105"
             >
@@ -78,7 +78,7 @@ export function CarSlideshow({ images }: { images: CarDetailImage[] }) {
                 <button
                   key={image.src + i}
                   type="button"
-                  aria-label={`Show photo ${i + 1}`}
+                  aria-label={`Ver foto ${i + 1}`}
                   onClick={() => goTo(i)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
                     i === index ? "w-6 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"

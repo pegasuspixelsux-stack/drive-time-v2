@@ -39,17 +39,17 @@ export function CarHeaderInfo({ car }: { car: Car }) {
         <div className="text-left sm:text-right">
           <p className="text-3xl font-semibold tracking-tight text-zinc-900">
             {currencyPrecise.format(monthly)}
-            <span className="text-base font-normal text-zinc-500">/mo</span>
+            <span className="text-base font-normal text-zinc-500">/mes</span>
           </p>
           <p className="mt-1 text-[0.9rem] text-zinc-500">
-            {currency.format(car.price)} total price
+            Precio total: {currency.format(car.price)}
           </p>
         </div>
       </div>
 
       <p className="mt-4 border-t border-zinc-200 pt-4 text-[0.78rem] leading-relaxed text-zinc-400">
-        Payment calculated with a 30% down payment, 6.9% interest rate, and a
-        60-month term. Subject to credit approval.
+        Cuota calculada con un pago inicial del 30%, una tasa de interés del
+        6.9% y un plazo de 60 meses. Sujeto a aprobación crediticia.
       </p>
     </div>
   );
