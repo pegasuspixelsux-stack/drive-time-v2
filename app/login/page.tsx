@@ -36,7 +36,8 @@ export default function LoginPage() {
         sizes="100vw"
         className="object-cover object-center"
       />
-      <div className="absolute inset-0 bg-background/80" />
+      <div className="absolute inset-y-0 left-0 w-1/2 bg-background/0" />
+      <div className="absolute inset-y-0 right-0 w-1/2 bg-background/50" />
 
       <div className="relative z-10 hidden w-1/2 flex-col justify-between p-12 lg:flex">
         <motion.span
