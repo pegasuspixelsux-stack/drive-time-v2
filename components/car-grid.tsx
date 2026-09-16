@@ -16,7 +16,7 @@ export function CarGrid() {
     bodyType === "All" ? cars : cars.filter((car) => car.bodyType === bodyType);
 
   return (
-    <section id="inventory" className="bg-background px-6 pb-28 pt-16 sm:pt-24 lg:px-8">
+    <section id="inventory" className="bg-background px-6 pb-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <motion.div
           variants={fadeUp}
