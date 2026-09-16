@@ -25,7 +25,7 @@ export function PreFooterHero() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 text-center"
+        className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-6 px-3 text-center sm:px-6"
       >
         <motion.h2
           variants={fadeUp}

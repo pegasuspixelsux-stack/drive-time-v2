@@ -50,7 +50,7 @@ export function CarCard({ car }: { car: Car }) {
         />
       </button>
 
-      <div className="relative w-2/5 flex-shrink-0 overflow-hidden bg-surface-2 sm:w-1/2">
+      <div className="relative aspect-square w-2/5 flex-shrink-0 self-start overflow-hidden bg-surface-2 sm:aspect-auto sm:w-1/2 sm:self-stretch">
         <Image
           src={car.image}
           alt={`${car.year} ${car.make} ${car.model} ${car.trim}`}
@@ -63,7 +63,7 @@ export function CarCard({ car }: { car: Car }) {
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 p-5">
+      <div className="flex flex-1 flex-col gap-2 p-5 sm:gap-4">
         <div>
           <h3 className="text-[1.05rem] font-semibold leading-tight text-foreground">
             {car.make} {car.model}
@@ -77,7 +77,7 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-4 text-[0.78rem] text-muted sm:grid-cols-3 sm:border-t sm:border-border">
+        <div className="grid grid-cols-2 gap-2 pt-1 text-[0.78rem] text-muted sm:grid-cols-3 sm:border-t sm:border-border sm:pt-4">
           <div className="flex items-center gap-1.5">
             <Calendar size={14} />
             <span>{car.year}</span>
@@ -92,7 +92,7 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <div className="mt-auto flex items-end justify-between gap-3 pt-4 sm:border-t sm:border-border">
+        <div className="mt-auto flex items-end justify-between gap-3 pt-1 sm:border-t sm:border-border sm:pt-4">
           <p className="whitespace-nowrap text-[0.8rem] text-muted">
             {currency.format(car.price)}
           </p>
@@ -101,7 +101,7 @@ export function CarCard({ car }: { car: Car }) {
               {currencyPrecise.format(estimateMonthlyPayment(car.price))}
               <span className="hidden sm:inline">/mo</span>
             </p>
-            <p className="mt-1 text-[0.7rem] text-muted sm:hidden">/mo</p>
+            <p className="mt-0.5 text-[0.7rem] text-muted sm:hidden">/mo</p>
           </div>
         </div>
       </div>

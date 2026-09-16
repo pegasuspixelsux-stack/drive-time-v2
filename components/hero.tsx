@@ -103,7 +103,7 @@ export function Hero() {
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
-        className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-4 px-6 pb-16 pt-14 sm:gap-6 sm:pb-36 sm:pt-24 lg:px-8"
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 pb-16 pt-14 sm:gap-6 sm:px-6 sm:pb-36 sm:pt-24 lg:px-8"
       >
         <motion.p
           variants={fadeUp}

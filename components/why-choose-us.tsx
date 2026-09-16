@@ -33,7 +33,7 @@ const PILLARS = [
 
 export function WhyChooseUs() {
   return (
-    <section id="about" className="bg-background px-6 py-24 lg:px-8">
+    <section id="about" className="bg-background px-3 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
         <motion.div
           variants={staggerContainer}

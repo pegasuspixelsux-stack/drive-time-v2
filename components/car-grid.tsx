@@ -16,7 +16,7 @@ export function CarGrid() {
     bodyType === "All" ? cars : cars.filter((car) => car.bodyType === bodyType);
 
   return (
-    <section id="inventory" className="bg-background px-6 pb-28 lg:px-8">
+    <section id="inventory" className="bg-background px-3 pb-28 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <motion.div
           variants={fadeUp}
@@ -56,7 +56,7 @@ export function CarGrid() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2"
+          className="grid grid-cols-1 gap-3 sm:gap-6 md:grid-cols-2"
         >
           {visibleCars.map((car) => (
             <CarCard key={car.id} car={car} />
