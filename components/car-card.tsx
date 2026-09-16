@@ -77,7 +77,7 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 border-t border-border pt-4 text-[0.78rem] text-muted sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 pt-4 text-[0.78rem] text-muted sm:grid-cols-3 sm:border-t sm:border-border">
           <div className="flex items-center gap-1.5">
             <Calendar size={14} />
             <span>{car.year}</span>
@@ -92,13 +92,17 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
+        <div className="mt-auto flex items-end justify-between gap-3 pt-4 sm:border-t sm:border-border">
           <p className="whitespace-nowrap text-[0.8rem] text-muted">
             {currency.format(car.price)}
           </p>
-          <p className="text-[1.3rem] font-semibold leading-none text-foreground">
-            {currencyPrecise.format(estimateMonthlyPayment(car.price))}/mo
-          </p>
+          <div className="text-right sm:text-left">
+            <p className="text-[1.3rem] font-semibold leading-none text-foreground">
+              {currencyPrecise.format(estimateMonthlyPayment(car.price))}
+              <span className="hidden sm:inline">/mo</span>
+            </p>
+            <p className="mt-1 text-[0.7rem] text-muted sm:hidden">/mo</p>
+          </div>
         </div>
       </div>
     </motion.article>
