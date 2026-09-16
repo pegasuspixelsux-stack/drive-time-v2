@@ -14,11 +14,11 @@ import {
 import { getCurrentUser, logout } from "@/lib/auth";
 
 const NAV_LINKS = [
-  { label: "Control Panel", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Inventory", href: "/dashboard/inventory", icon: Car },
-  { label: "Leads", href: "/dashboard/leads", icon: Target },
-  { label: "Contact Us", href: "/dashboard/contact", icon: Mail },
-  { label: "Users", href: "/dashboard/users", icon: Users },
+  { label: "Panel de Control", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Inventario", href: "/dashboard/inventory", icon: Car },
+  { label: "Prospectos", href: "/dashboard/leads", icon: Target },
+  { label: "Contacto", href: "/dashboard/contact", icon: Mail },
+  { label: "Usuarios", href: "/dashboard/users", icon: Users },
 ];
 
 export function Sidebar() {
@@ -90,22 +90,22 @@ export function Sidebar() {
         <div className="mt-2 flex flex-col items-center gap-1 lg:flex-row">
           <button
             type="button"
-            aria-label="Settings"
-            title="Settings"
+            aria-label="Configuración"
+            title="Configuración"
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center gap-2 rounded-lg text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:w-auto lg:flex-1"
           >
             <Settings size={16} />
-            <span className="hidden lg:inline">Settings</span>
+            <span className="hidden lg:inline">Configuración</span>
           </button>
           <button
             type="button"
-            aria-label="Log out"
-            title="Log out"
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
             onClick={handleLogout}
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center gap-2 rounded-lg text-sm text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 lg:w-auto lg:flex-1"
           >
             <LogOut size={16} />
-            <span className="hidden lg:inline">Log out</span>
+            <span className="hidden lg:inline">Cerrar sesión</span>
           </button>
         </div>
       </div>
