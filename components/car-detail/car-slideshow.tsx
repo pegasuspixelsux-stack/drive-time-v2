@@ -35,6 +35,7 @@ export function CarSlideshow({ images }: { images: CarDetailImage[] }) {
           drag="x"
           dragElastic={0.15}
           dragConstraints={{ left: 0, right: 0 }}
+          dragSnapToOrigin={true}
           onDragEnd={handleDragEnd}
           animate={{ x: `${-index * 100}%` }}
           transition={{ type: "spring", stiffness: 300, damping: 32 }}
