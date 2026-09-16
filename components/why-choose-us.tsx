@@ -7,27 +7,27 @@ import { fadeUp, staggerContainer } from "@/lib/motion";
 const PILLARS = [
   {
     icon: ShieldCheck,
-    title: "Certified Inspections",
+    title: "Inspecciones Certificadas",
     description:
-      "Every vehicle passes a 150-point multi-system inspection before it ever reaches our lot.",
+      "Cada vehículo pasa por una inspección multisistema de 150 puntos antes de llegar a nuestro predio.",
   },
   {
     icon: Tag,
-    title: "Transparent Pricing",
+    title: "Precios Transparentes",
     description:
-      "No hidden fees, no last-minute markups — the price you see is the price you pay.",
+      "Sin costos ocultos, sin recargos de último momento — el precio que ves es el precio que pagás.",
   },
   {
     icon: HandCoins,
-    title: "Zero-Pressure Financing",
+    title: "Financiamiento Sin Presión",
     description:
-      "Explore financing options at your own pace, with terms built around your budget.",
+      "Explorá las opciones de financiamiento a tu propio ritmo, con condiciones adaptadas a tu presupuesto.",
   },
   {
     icon: LifeBuoy,
-    title: "Lifetime Support",
+    title: "Soporte de por Vida",
     description:
-      "Complimentary checkups and priority scheduling for as long as you own your DriveTime vehicle.",
+      "Revisiones gratuitas y turnos prioritarios durante todo el tiempo que tengas tu vehículo DriveTime.",
   },
 ];
 
@@ -43,25 +43,27 @@ export function WhyChooseUs() {
           className="flex flex-col justify-center gap-6"
         >
           <motion.p variants={fadeUp} className="text-[0.9rem] font-medium text-muted">
-            Why Choose DriveTime
+            Por Qué Elegir DriveTime
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-balance text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl"
           >
-            Driven by Quality, Defined by Trust
+            Impulsados por la Calidad, Definidos por la Confianza
           </motion.h2>
           <motion.p variants={fadeUp} className="max-w-lg text-[0.98rem] leading-relaxed text-muted">
-            Every vehicle in our collection is put through a rigorous
-            multi-point inspection long before it&rsquo;s listed — because
-            trust is earned in the details you never have to think about.
-            We price transparently, explain every option in plain language,
-            and build financing around your life, not our quota.
+            Cada vehículo de nuestra colección pasa por una rigurosa
+            inspección multipunto mucho antes de ser publicado — porque la
+            confianza se gana en los detalles en los que nunca tenés que
+            pensar. Fijamos precios de forma transparente, explicamos cada
+            opción en un lenguaje claro y armamos el financiamiento en torno
+            a tu vida, no a nuestra cuota.
           </motion.p>
           <motion.p variants={fadeUp} className="max-w-lg text-[0.98rem] leading-relaxed text-muted">
-            From your first test drive to years down the road, our team
-            stays reachable — so buying a car feels less like a negotiation
-            and more like a decision you can make with confidence.
+            Desde tu primera prueba de manejo hasta años después, nuestro
+            equipo sigue disponible — para que comprar un auto se sienta
+            menos como una negociación y más como una decisión que podés
+            tomar con confianza.
           </motion.p>
         </motion.div>
 

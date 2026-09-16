@@ -13,10 +13,10 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const QUICK_LINKS = [
-  { label: "Inventory", href: "/#inventory" },
-  { label: "Financing", href: "/#financing" },
-  { label: "Trade-In", href: "/#financing" },
-  { label: "Special Offers", href: "/#financing" },
+  { label: "Inventario", href: "/#inventory" },
+  { label: "Financiamiento", href: "/#financing" },
+  { label: "Permuta", href: "/#financing" },
+  { label: "Ofertas Especiales", href: "/#financing" },
 ];
 
 const SOCIALS = [
@@ -46,8 +46,9 @@ export function Footer() {
               DriveTime
             </span>
             <p className="max-w-xs text-[0.9rem] leading-relaxed text-muted">
-              A curated dealership for precision-engineered sedans, SUVs, and
-              performance vehicles — every one inspected and certified.
+              Una concesionaria curada de sedanes, SUVs y vehículos de alto
+              rendimiento diseñados con precisión — todos inspeccionados y
+              certificados.
             </p>
             <div className="mt-2 flex items-center gap-3">
               {SOCIALS.map(({ label, href, icon: Icon }) => (
@@ -67,7 +68,7 @@ export function Footer() {
 
           <div className="flex flex-col gap-4">
             <h3 className="text-[0.9rem] font-medium text-foreground">
-              Quick Links
+              Enlaces Rápidos
             </h3>
             <ul className="flex flex-col gap-3">
               {QUICK_LINKS.map((link) => (
@@ -85,7 +86,7 @@ export function Footer() {
 
           <div className="flex flex-col gap-4">
             <h3 className="text-[0.9rem] font-medium text-foreground">
-              Visit Us
+              Visitanos
             </h3>
             <ul className="flex flex-col gap-3 text-[0.9rem] text-muted">
               <li className="flex items-start gap-2.5">
@@ -98,17 +99,17 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={16} className="shrink-0" />
-                <span>Mon – Sat, 9am – 7pm</span>
+                <span>Lun – Sáb, 9 a 19 hs</span>
               </li>
             </ul>
           </div>
 
           <div className="flex flex-col gap-4">
             <h3 className="text-[0.9rem] font-medium text-foreground">
-              Stay in the Loop
+              Mantenete Informado
             </h3>
             <p className="text-[0.9rem] text-muted">
-              New arrivals and offers, at most once a week.
+              Novedades y ofertas, como máximo una vez por semana.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
               <div className="flex gap-2">
@@ -124,7 +125,7 @@ export function Footer() {
                   type="submit"
                   className="flex h-11 items-center justify-center rounded-xl bg-foreground px-4 text-[0.85rem] font-medium text-accent-foreground transition-transform duration-150 ease-out hover:scale-[1.03] active:scale-[0.97]"
                 >
-                  Join
+                  Sumarme
                 </button>
               </div>
               <AnimatePresence>
@@ -136,7 +137,7 @@ export function Footer() {
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     className="text-[0.82rem] text-muted"
                   >
-                    You&rsquo;re on the list — welcome to DriveTime.
+                    Ya estás en la lista — te damos la bienvenida a DriveTime.
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -145,16 +146,16 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-[0.82rem] text-muted-2 sm:flex-row">
-          <p>© {new Date().getFullYear()} DriveTime Motors. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} DriveTime Motors. Todos los derechos reservados.</p>
           <div className="flex items-center gap-6">
             <Link href="#" className="transition-colors hover:text-foreground">
-              Privacy Policy
+              Política de Privacidad
             </Link>
             <Link href="#" className="transition-colors hover:text-foreground">
-              Terms of Service
+              Términos de Servicio
             </Link>
             <Link href="/login" className="transition-colors hover:text-foreground">
-              Login
+              Iniciar Sesión
             </Link>
             <ThemeToggle />
           </div>

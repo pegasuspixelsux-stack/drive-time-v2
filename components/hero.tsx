@@ -69,7 +69,7 @@ export function Hero() {
           <button
             key={item.src}
             type="button"
-            aria-label={`Show slide ${index + 1}`}
+            aria-label={`Mostrar diapositiva ${index + 1}`}
             onClick={() => setSlide(index)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               index === slide
@@ -82,7 +82,7 @@ export function Hero() {
 
       <button
         type="button"
-        aria-label="Scroll to inventory"
+        aria-label="Desplazarse al inventario"
         onClick={() =>
           document
             .getElementById("inventory")
@@ -109,22 +109,22 @@ export function Hero() {
           variants={fadeUp}
           className="text-[0.9rem] font-medium text-muted"
         >
-          Certified inventory · Nationwide delivery
+          Inventario certificado · Entrega a nivel nacional
         </motion.p>
 
         <motion.h1
           variants={fadeUp}
           className="text-balance max-w-3xl text-3xl font-semibold leading-[1.02] tracking-tight text-foreground sm:text-6xl sm:leading-[0.98] lg:text-[5.25rem]"
         >
-          Find Your Next Precision Machine
+          Encontrá tu Próxima Máquina de Precisión
         </motion.h1>
 
         <motion.p
           variants={fadeUp}
           className="hidden max-w-xl text-lg leading-relaxed text-muted sm:block"
         >
-          A curated collection of sedans, SUVs, and performance vehicles —
-          inspected, certified, and delivered to your door.
+          Una colección curada de sedanes, SUVs y vehículos de alto
+          rendimiento — inspeccionados, certificados y entregados en tu puerta.
         </motion.p>
       </motion.div>
     </section>

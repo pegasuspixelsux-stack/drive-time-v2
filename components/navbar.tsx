@@ -8,11 +8,11 @@ import { easeOut } from "@/lib/motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_LINKS = [
-  { label: "Inventory", href: "/#inventory" },
-  { label: "Showroom", href: "/#showroom" },
-  { label: "Financing", href: "/#financing" },
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Inventario", href: "/#inventory" },
+  { label: "Sala de Exhibición", href: "/#showroom" },
+  { label: "Financiamiento", href: "/#financing" },
+  { label: "Nosotros", href: "/#about" },
+  { label: "Contacto", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -69,7 +69,7 @@ export function Navbar() {
             href="/#contact"
             className="inline-flex h-10 items-center rounded-full bg-foreground px-5 text-[0.85rem] font-medium text-accent-foreground transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97]"
           >
-            Schedule Test Drive
+            Agendá una Prueba de Manejo
           </a>
         </div>
 
@@ -77,7 +77,7 @@ export function Navbar() {
           <ThemeToggle />
           <button
             type="button"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
             className="flex h-10 w-10 items-center justify-center rounded-full text-foreground"
@@ -114,7 +114,7 @@ export function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="flex h-11 w-full items-center justify-center rounded-full bg-foreground text-[0.9rem] font-medium text-accent-foreground"
                 >
-                  Schedule Test Drive
+                  Agendá una Prueba de Manejo
                 </a>
               </li>
             </ul>
