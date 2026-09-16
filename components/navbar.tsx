@@ -8,11 +8,11 @@ import { easeOut } from "@/lib/motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_LINKS = [
-  { label: "Inventory", href: "#inventory" },
-  { label: "Showroom", href: "#showroom" },
-  { label: "Financing", href: "#financing" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Inventory", href: "/#inventory" },
+  { label: "Showroom", href: "/#showroom" },
+  { label: "Financing", href: "/#financing" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -43,7 +43,7 @@ export function Navbar() {
     >
       <nav className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link
-          href="#top"
+          href="/"
           className="text-[1.35rem] font-semibold tracking-tight text-foreground"
         >
           DriveTime
@@ -66,7 +66,7 @@ export function Navbar() {
         <div className="hidden items-center gap-4 lg:flex">
           <ThemeToggle />
           <a
-            href="#contact"
+            href="/#contact"
             className="inline-flex h-10 items-center rounded-full bg-foreground px-5 text-[0.85rem] font-medium text-accent-foreground transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97]"
           >
             Schedule Test Drive
@@ -110,7 +110,7 @@ export function Navbar() {
               ))}
               <li className="pt-4">
                 <a
-                  href="#contact"
+                  href="/#contact"
                   onClick={() => setMenuOpen(false)}
                   className="flex h-11 w-full items-center justify-center rounded-full bg-foreground text-[0.9rem] font-medium text-accent-foreground"
                 >

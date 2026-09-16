@@ -13,10 +13,10 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const QUICK_LINKS = [
-  { label: "Inventory", href: "#inventory" },
-  { label: "Financing", href: "#financing" },
-  { label: "Trade-In", href: "#financing" },
-  { label: "Special Offers", href: "#financing" },
+  { label: "Inventory", href: "/#inventory" },
+  { label: "Financing", href: "/#financing" },
+  { label: "Trade-In", href: "/#financing" },
+  { label: "Special Offers", href: "/#financing" },
 ];
 
 const SOCIALS = [
