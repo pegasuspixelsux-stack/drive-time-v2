@@ -18,6 +18,14 @@ const STATUS_TONE: Record<LeadStatus, "blue" | "amber" | "purple" | "green"> = {
   Won: "green",
 };
 
+const STATUS_LABELS: Record<LeadStatus | "All", string> = {
+  All: "Todos",
+  New: "Nuevo",
+  Contacted: "Contactado",
+  Negotiating: "Negociando",
+  Won: "Ganado",
+};
+
 export default function LeadsPage() {
   const [leads, setLeads] = useLocalStorage("dt_leads", seedLeads);
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "All">("All");
@@ -55,8 +63,8 @@ export default function LeadsPage() {
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Leads</h1>
-        <p className="mt-1 text-sm text-slate-500">{leads.length} inquiries in the pipeline.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Prospectos</h1>
+        <p className="mt-1 text-sm text-slate-500">{leads.length} consultas en el embudo de ventas.</p>
       </div>
 
       <motion.div variants={fadeUp} className="flex flex-wrap gap-2">
@@ -74,7 +82,7 @@ export default function LeadsPage() {
                 : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
             }`}
           >
-            {status} <span className="ml-1 text-xs opacity-70">{counts[status]}</span>
+            {STATUS_LABELS[status]} <span className="ml-1 text-xs opacity-70">{counts[status]}</span>
           </button>
         ))}
       </motion.div>
@@ -83,12 +91,12 @@ export default function LeadsPage() {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-xs font-medium uppercase tracking-wide text-slate-500">
-              <th className="px-5 py-3">Contact</th>
-              <th className="px-5 py-3">Interested In</th>
-              <th className="px-5 py-3">Source</th>
-              <th className="px-5 py-3">Status</th>
-              <th className="px-5 py-3">Created</th>
-              <th className="px-5 py-3 text-right">Actions</th>
+              <th className="px-5 py-3">Contacto</th>
+              <th className="px-5 py-3">Interesado en</th>
+              <th className="px-5 py-3">Origen</th>
+              <th className="px-5 py-3">Estado</th>
+              <th className="px-5 py-3">Creado</th>
+              <th className="px-5 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -102,15 +110,15 @@ export default function LeadsPage() {
                 <td className="px-5 py-3 text-slate-600">{lead.source}</td>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">
-                    <StatusPill label={lead.status} tone={STATUS_TONE[lead.status]} />
+                    <StatusPill label={STATUS_LABELS[lead.status]} tone={STATUS_TONE[lead.status]} />
                     <select
                       value={lead.status}
                       onChange={(event) => updateStatus(lead.id, event.target.value as LeadStatus)}
                       className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 focus-visible:outline-none"
-                      aria-label={`Change status for ${lead.name}`}
+                      aria-label={`Cambiar estado de ${lead.name}`}
                     >
                       {STATUS_OPTIONS.map((status) => (
-                        <option key={status} value={status}>{status}</option>
+                        <option key={status} value={status}>{STATUS_LABELS[status]}</option>
                       ))}
                     </select>
                   </div>
@@ -119,7 +127,7 @@ export default function LeadsPage() {
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    aria-label="Delete lead"
+                    aria-label="Eliminar prospecto"
                     onClick={() => handleDelete(lead.id)}
                     className={`inline-flex h-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${
                       confirmDeleteId === lead.id
@@ -127,7 +135,7 @@ export default function LeadsPage() {
                         : "text-slate-500 hover:bg-red-50 hover:text-red-600"
                     }`}
                   >
-                    {confirmDeleteId === lead.id ? "Confirm?" : <Trash2 size={15} />}
+                    {confirmDeleteId === lead.id ? "¿Confirmar?" : <Trash2 size={15} />}
                   </button>
                 </td>
               </tr>

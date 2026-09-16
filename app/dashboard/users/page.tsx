@@ -12,6 +12,17 @@ import { fadeUp, staggerContainer } from "@/lib/motion";
 
 const ROLES: TeamRole[] = ["Admin", "Manager", "Sales"];
 
+const ROLE_LABELS: Record<TeamRole, string> = {
+  Admin: "Administrador",
+  Manager: "Gerente",
+  Sales: "Ventas",
+};
+
+const STATUS_LABELS: Record<TeamUser["status"], string> = {
+  Active: "Activo",
+  Invited: "Invitado",
+};
+
 export default function UsersPage() {
   const [users, setUsers] = useLocalStorage("dt_users", seedUsers);
   const [modalOpen, setModalOpen] = useState(false);
@@ -53,8 +64,8 @@ export default function UsersPage() {
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Users</h1>
-          <p className="mt-1 text-sm text-slate-500">{users.length} team members.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Usuarios</h1>
+          <p className="mt-1 text-sm text-slate-500">{users.length} miembros del equipo.</p>
         </div>
         <button
           type="button"
@@ -62,7 +73,7 @@ export default function UsersPage() {
           className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
         >
           <Plus size={16} />
-          Invite User
+          Invitar Usuario
         </button>
       </div>
 
@@ -70,10 +81,10 @@ export default function UsersPage() {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-xs font-medium uppercase tracking-wide text-slate-500">
-              <th className="px-5 py-3">Member</th>
-              <th className="px-5 py-3">Role</th>
-              <th className="px-5 py-3">Status</th>
-              <th className="px-5 py-3 text-right">Actions</th>
+              <th className="px-5 py-3">Miembro</th>
+              <th className="px-5 py-3">Rol</th>
+              <th className="px-5 py-3">Estado</th>
+              <th className="px-5 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -97,17 +108,17 @@ export default function UsersPage() {
                     className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 focus-visible:outline-none"
                   >
                     {ROLES.map((role) => (
-                      <option key={role} value={role}>{role}</option>
+                      <option key={role} value={role}>{ROLE_LABELS[role]}</option>
                     ))}
                   </select>
                 </td>
                 <td className="px-5 py-3">
-                  <StatusPill label={user.status} tone={user.status === "Active" ? "green" : "slate"} />
+                  <StatusPill label={STATUS_LABELS[user.status]} tone={user.status === "Active" ? "green" : "slate"} />
                 </td>
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    aria-label="Remove user"
+                    aria-label="Eliminar usuario"
                     onClick={() => handleDelete(user.id)}
                     className={`inline-flex h-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${
                       confirmDeleteId === user.id
@@ -115,7 +126,7 @@ export default function UsersPage() {
                         : "text-slate-500 hover:bg-red-50 hover:text-red-600"
                     }`}
                   >
-                    {confirmDeleteId === user.id ? "Confirm?" : <Trash2 size={15} />}
+                    {confirmDeleteId === user.id ? "¿Confirmar?" : <Trash2 size={15} />}
                   </button>
                 </td>
               </tr>
@@ -124,18 +135,18 @@ export default function UsersPage() {
         </table>
       </motion.div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Invite User">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Invitar Usuario">
         <div className="flex flex-col gap-4">
-          <DashboardField label="Full Name">
+          <DashboardField label="Nombre Completo">
             <input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className={dashboardInputClass} />
           </DashboardField>
-          <DashboardField label="Email">
+          <DashboardField label="Correo Electrónico">
             <input type="email" value={draft.email} onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))} className={dashboardInputClass} />
           </DashboardField>
-          <DashboardField label="Role">
+          <DashboardField label="Rol">
             <select value={draft.role} onChange={(e) => setDraft((d) => ({ ...d, role: e.target.value as TeamRole }))} className={dashboardInputClass}>
               {ROLES.map((role) => (
-                <option key={role} value={role}>{role}</option>
+                <option key={role} value={role}>{ROLE_LABELS[role]}</option>
               ))}
             </select>
           </DashboardField>
@@ -145,7 +156,7 @@ export default function UsersPage() {
             disabled={!isDraftValid}
             className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600"
           >
-            Send Invite
+            Enviar Invitación
           </button>
         </div>
       </Modal>

@@ -46,8 +46,8 @@ export default function ContactPage() {
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Contact Us</h1>
-        <p className="mt-1 text-sm text-slate-500">{unreadCount} unread of {messages.length} messages.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Contacto</h1>
+        <p className="mt-1 text-sm text-slate-500">{unreadCount} sin leer de {messages.length} mensajes.</p>
       </div>
 
       <motion.div variants={fadeUp} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -93,7 +93,7 @@ export default function ContactPage() {
               }`}
             >
               <Trash2 size={15} />
-              {confirmDeleteId === active.id ? "Confirm delete" : "Delete message"}
+              {confirmDeleteId === active.id ? "Confirmar eliminación" : "Eliminar mensaje"}
             </button>
           </div>
         )}
