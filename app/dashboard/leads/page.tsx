@@ -64,7 +64,10 @@ export default function LeadsPage() {
           <button
             key={status}
             type="button"
-            onClick={() => setStatusFilter(status)}
+            onClick={() => {
+              setStatusFilter(status);
+              setConfirmDeleteId(null);
+            }}
             className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
               statusFilter === status
                 ? "border-indigo-600 bg-indigo-600 text-white"

@@ -10,6 +10,7 @@ import { DashboardField, dashboardInputClass } from "@/components/dashboard/form
 import { useLocalStorage } from "@/lib/use-local-storage";
 import { seedInventory, type InventoryItem, type InventoryStatus } from "@/lib/dashboard-data";
 import { fadeUp, staggerContainer } from "@/lib/motion";
+import { ALLOWED_IMAGE_HOSTS, isAllowedImageUrl } from "@/lib/image-hosts";
 
 const currency = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -67,6 +68,7 @@ export default function InventoryPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<DraftVehicle>(EMPTY_DRAFT);
+  const [errors, setErrors] = useState<{ image?: string }>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
@@ -79,20 +81,33 @@ export default function InventoryPage() {
     });
   }, [inventory, search, statusFilter]);
 
+  const isDraftValid = Boolean(draft.make.trim() && draft.model.trim() && draft.price.trim());
+
   const openAddModal = () => {
     setEditingId(null);
     setDraft(EMPTY_DRAFT);
+    setErrors({});
     setModalOpen(true);
   };
 
   const openEditModal = (item: InventoryItem) => {
     setEditingId(item.id);
     setDraft(toDraft(item));
+    setErrors({});
     setModalOpen(true);
   };
 
   const handleSave = () => {
-    if (!draft.make.trim() || !draft.model.trim() || !draft.price.trim()) return;
+    if (!isDraftValid) return;
+
+    const trimmedImage = draft.image.trim();
+    if (trimmedImage && !isAllowedImageUrl(trimmedImage)) {
+      setErrors({
+        image: `Image URL must be hosted on: ${ALLOWED_IMAGE_HOSTS.join(", ")}`,
+      });
+      return;
+    }
+    setErrors({});
 
     if (editingId) {
       setInventory((prev) =>
@@ -107,7 +122,7 @@ export default function InventoryPage() {
                 price: Number(draft.price) || item.price,
                 mileage: Number(draft.mileage) || item.mileage,
                 status: draft.status,
-                image: draft.image.trim() || item.image,
+                image: trimmedImage || item.image,
               }
             : item,
         ),
@@ -127,7 +142,7 @@ export default function InventoryPage() {
         color: "Jet Black",
         colorHex: "#0a0a0b",
         status: draft.status,
-        image: draft.image.trim() || EMPTY_DRAFT.image,
+        image: trimmedImage || EMPTY_DRAFT.image,
       };
       setInventory((prev) => [newItem, ...prev]);
     }
@@ -166,14 +181,20 @@ export default function InventoryPage() {
           <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setConfirmDeleteId(null);
+            }}
             placeholder="Search make, model, or trim"
             className={`${dashboardInputClass} pl-10`}
           />
         </div>
         <select
           value={statusFilter}
-          onChange={(event) => setStatusFilter(event.target.value as InventoryStatus | "All")}
+          onChange={(event) => {
+            setStatusFilter(event.target.value as InventoryStatus | "All");
+            setConfirmDeleteId(null);
+          }}
           className={`${dashboardInputClass} sm:w-48`}
         >
           <option value="All">All statuses</option>
@@ -279,12 +300,21 @@ export default function InventoryPage() {
             </select>
           </DashboardField>
           <DashboardField label="Image URL">
-            <input value={draft.image} onChange={(e) => setDraft((d) => ({ ...d, image: e.target.value }))} className={dashboardInputClass} />
+            <input
+              value={draft.image}
+              onChange={(e) => {
+                setDraft((d) => ({ ...d, image: e.target.value }));
+                setErrors({});
+              }}
+              className={dashboardInputClass}
+            />
+            {errors.image && <p className="text-xs text-red-600">{errors.image}</p>}
           </DashboardField>
           <button
             type="button"
             onClick={handleSave}
-            className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+            disabled={!isDraftValid}
+            className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600"
           >
             {editingId ? "Save Changes" : "Add Vehicle"}
           </button>

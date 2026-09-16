@@ -18,6 +18,8 @@ export default function UsersPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [draft, setDraft] = useState({ name: "", email: "", role: "Sales" as TeamRole });
 
+  const isDraftValid = Boolean(draft.name.trim() && draft.email.trim());
+
   const initials = (name: string) => name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 
   const updateRole = (id: string, role: TeamRole) => {
@@ -34,7 +36,7 @@ export default function UsersPage() {
   };
 
   const handleInvite = () => {
-    if (!draft.name.trim() || !draft.email.trim()) return;
+    if (!isDraftValid) return;
     const newUser: TeamUser = {
       id: `user-${Date.now()}`,
       name: draft.name.trim(),
@@ -140,7 +142,8 @@ export default function UsersPage() {
           <button
             type="button"
             onClick={handleInvite}
-            className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+            disabled={!isDraftValid}
+            className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600"
           >
             Send Invite
           </button>
