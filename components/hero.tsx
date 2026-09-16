@@ -61,8 +61,8 @@ export function Hero() {
           />
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-background/10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-background/10 opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/40 opacity-60" />
 
       <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:bottom-8">
         {SLIDES.map((item, index) => (

@@ -10,6 +10,7 @@ import {
   XIcon,
   YoutubeIcon,
 } from "@/components/social-icons";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const QUICK_LINKS = [
   { label: "Inventory", href: "#inventory" },
@@ -145,13 +146,14 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-[0.82rem] text-muted-2 sm:flex-row">
           <p>© {new Date().getFullYear()} DriveTime Motors. All rights reserved.</p>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
             <Link href="#" className="transition-colors hover:text-foreground">
               Privacy Policy
             </Link>
             <Link href="#" className="transition-colors hover:text-foreground">
               Terms of Service
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </div>

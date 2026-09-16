@@ -17,8 +17,8 @@ export function PreFooterHero() {
         sizes="100vw"
         className="object-cover object-center"
       />
-      <div className="absolute inset-0 bg-background/70" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/60" />
+      <div className="absolute inset-0 bg-background/70 opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/60 opacity-60" />
 
       <motion.div
         variants={staggerContainer}

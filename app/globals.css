@@ -18,6 +18,20 @@
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+[data-theme="light"] {
+  --background: #fafafa;
+  --background-elevated: #f2f2f3;
+  --surface: #ffffff;
+  --surface-2: #eeeeef;
+  --foreground: #0a0a0b;
+  --muted: #56565c;
+  --muted-2: #86868c;
+  --border: rgba(10, 10, 11, 0.08);
+  --border-strong: rgba(10, 10, 11, 0.14);
+  --accent: #0a0a0b;
+  --accent-foreground: #fafafa;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-background-elevated: var(--background-elevated);
@@ -42,9 +56,14 @@ html {
   color-scheme: dark;
 }
 
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+  transition: background-color 300ms var(--ease-out-soft), color 300ms var(--ease-out-soft);
 }
 
 ::selection {
