@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { fadeUp, staggerContainer } from "@/lib/motion";
 
 const SLIDES = [
@@ -78,6 +79,25 @@ export function Hero() {
           />
         ))}
       </div>
+
+      <button
+        type="button"
+        aria-label="Scroll to inventory"
+        onClick={() =>
+          document
+            .getElementById("inventory")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+        className="absolute bottom-6 right-6 z-10 sm:bottom-8 sm:right-8"
+      >
+        <motion.span
+          animate={{ opacity: [1, 0.25, 1] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black"
+        >
+          <ChevronDown size={18} />
+        </motion.span>
+      </button>
 
       <motion.div
         initial="hidden"
