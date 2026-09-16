@@ -153,6 +153,9 @@ export function Footer() {
             <Link href="#" className="transition-colors hover:text-foreground">
               Terms of Service
             </Link>
+            <Link href="/login" className="transition-colors hover:text-foreground">
+              Login
+            </Link>
             <ThemeToggle />
           </div>
         </div>
