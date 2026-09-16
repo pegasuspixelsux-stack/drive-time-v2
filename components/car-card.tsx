@@ -68,7 +68,7 @@ export function CarCard({ car }: { car: Car }) {
           <h3 className="text-[1.05rem] font-semibold leading-tight text-foreground">
             {car.make} {car.model}
           </h3>
-          <div className="mt-0.5 flex items-center gap-1.5 text-[0.85rem] text-muted">
+          <div className="mt-0.5 hidden items-center gap-1.5 text-[0.85rem] text-muted sm:flex">
             <span
               className="h-3 w-3 flex-shrink-0 rounded-full border border-border-strong"
               style={{ backgroundColor: car.colorHex }}
@@ -77,7 +77,7 @@ export function CarCard({ car }: { car: Car }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 border-t border-border pt-4 text-[0.78rem] text-muted">
+        <div className="grid grid-cols-2 gap-2 border-t border-border pt-4 text-[0.78rem] text-muted sm:grid-cols-3">
           <div className="flex items-center gap-1.5">
             <Calendar size={14} />
             <span>{car.year}</span>
@@ -86,7 +86,7 @@ export function CarCard({ car }: { car: Car }) {
             <Gauge size={14} />
             <span>{mileageFormat.format(car.mileage)} km</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="hidden items-center gap-1.5 sm:flex">
             <FuelIcon size={14} />
             <span>{car.fuelType}</span>
           </div>
