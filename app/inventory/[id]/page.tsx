@@ -39,7 +39,7 @@ export default async function CarDetailPage({
   const similarCars = getSimilarCars(car.id, car.bodyType);
 
   return (
-    <>
+    <div data-theme="light" className="flex min-h-full flex-1 flex-col">
       <Navbar />
       <main className="flex-1 bg-zinc-50 pt-24 sm:pt-28">
         <CarSlideshow images={detail.images} />
@@ -50,6 +50,6 @@ export default async function CarDetailPage({
         <SimilarCarsSlider cars={similarCars} />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
