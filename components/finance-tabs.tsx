@@ -31,22 +31,30 @@ export function FinanceTabs() {
         >
           <motion.div
             variants={fadeUp}
-            className="glass rounded-[28px] p-6 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] sm:p-10"
+            className="glass relative overflow-hidden rounded-[28px] p-6 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] sm:p-10"
           >
-            <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
-              Financial Calculator
-            </h3>
-            <FinanceCalculator />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(8,16,60,0.65),transparent_60%)]" />
+
+            <div className="relative">
+              <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
+                Financial Calculator
+              </h3>
+              <FinanceCalculator />
+            </div>
           </motion.div>
 
           <motion.div
             variants={fadeUp}
-            className="glass rounded-[28px] p-6 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] sm:p-10"
+            className="glass relative overflow-hidden rounded-[28px] p-6 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] sm:p-10"
           >
-            <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
-              Value Your Trade-In
-            </h3>
-            <TradeInForm />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(8,16,60,0.65),transparent_60%)]" />
+
+            <div className="relative">
+              <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
+                Value Your Trade-In
+              </h3>
+              <TradeInForm />
+            </div>
           </motion.div>
         </motion.div>
       </div>

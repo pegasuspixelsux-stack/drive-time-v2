@@ -39,6 +39,8 @@ export function CarCard({ car }: { car: Car }) {
       variants={fadeUp}
       className="group relative flex flex-row overflow-hidden rounded-2xl border border-border bg-transparent transition-colors duration-300 hover:border-border-strong"
     >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(8,16,60,0.65),transparent_60%)]" />
+
       <button
         type="button"
         aria-label="View details"
