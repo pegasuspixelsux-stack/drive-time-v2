@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { FormField, FormInput, FormSelect } from "@/components/form-controls";
 
-const CONDITIONS = ["Excellent", "Good", "Fair", "Needs Work"];
+const CONDITIONS = ["Excelente", "Bueno", "Regular", "Necesita reparaciones"];
 
 export function TradeInForm() {
   const [condition, setCondition] = useState(CONDITIONS[0]);
@@ -28,18 +28,18 @@ export function TradeInForm() {
           <CheckCircle2 size={22} />
         </span>
         <h3 className="text-[1.05rem] font-semibold text-foreground">
-          Estimate request received
+          Solicitud de tasación recibida
         </h3>
         <p className="max-w-sm text-[0.9rem] text-muted">
-          An advisor will reach out with your trade-in valuation within one
-          business day.
+          Un asesor se pondrá en contacto con la valuación de tu vehículo
+          dentro del siguiente día hábil.
         </p>
         <button
           type="button"
           onClick={() => setSubmitted(false)}
           className="mt-2 text-[0.85rem] font-medium text-foreground underline decoration-border-strong underline-offset-4"
         >
-          Submit another vehicle
+          Tasar otro vehículo
         </button>
       </motion.div>
     );
@@ -57,37 +57,37 @@ export function TradeInForm() {
         className="flex flex-col gap-5"
       >
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <FormField label="Make">
-            <FormInput required placeholder="e.g. BMW" name="make" />
+          <FormField label="Marca">
+            <FormInput required placeholder="ej. BMW" name="make" />
           </FormField>
-          <FormField label="Model">
-            <FormInput required placeholder="e.g. M5" name="model" />
+          <FormField label="Modelo">
+            <FormInput required placeholder="ej. M5" name="model" />
           </FormField>
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <FormField label="Year">
+          <FormField label="Año">
             <FormInput
               required
               type="number"
-              placeholder="e.g. 2021"
+              placeholder="ej. 2021"
               min={1980}
               max={2027}
               name="year"
             />
           </FormField>
-          <FormField label="Mileage">
+          <FormField label="Kilometraje">
             <FormInput
               required
               type="number"
-              placeholder="e.g. 32,000"
+              placeholder="ej. 32.000"
               min={0}
               name="mileage"
             />
           </FormField>
         </div>
 
-        <FormField label="Overall Condition">
+        <FormField label="Estado General">
           <FormSelect
             options={CONDITIONS}
             value={condition}
@@ -96,20 +96,20 @@ export function TradeInForm() {
         </FormField>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <FormField label="Full Name">
+          <FormField label="Nombre Completo">
             <FormInput required placeholder="Jordan Avery" name="name" />
           </FormField>
-          <FormField label="Email">
+          <FormField label="Correo Electrónico">
             <FormInput
               required
               type="email"
-              placeholder="you@email.com"
+              placeholder="tu@email.com"
               name="email"
             />
           </FormField>
         </div>
 
-        <FormField label="Phone">
+        <FormField label="Teléfono">
           <FormInput
             required
             type="tel"
@@ -125,7 +125,7 @@ export function TradeInForm() {
           transition={{ duration: 0.15, ease: "easeOut" }}
           className="mt-2 flex h-12 items-center justify-center rounded-xl bg-foreground text-[0.9rem] font-medium text-accent-foreground"
         >
-          Get My Trade-In Estimate
+          Obtener Mi Estimación de Tasación
         </motion.button>
       </motion.form>
     </AnimatePresence>

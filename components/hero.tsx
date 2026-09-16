@@ -116,7 +116,7 @@ export function Hero() {
           variants={fadeUp}
           className="text-balance max-w-3xl text-3xl font-semibold leading-[1.02] tracking-tight text-foreground sm:text-6xl sm:leading-[0.98] lg:text-[5.25rem]"
         >
-          Encontrá tu Próxima Máquina de Precisión
+          Encuentra tu Próxima Máquina de Precisión
         </motion.h1>
 
         <motion.p

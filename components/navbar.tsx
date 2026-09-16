@@ -69,7 +69,7 @@ export function Navbar() {
             href="/#contact"
             className="inline-flex h-10 items-center rounded-full bg-foreground px-5 text-[0.85rem] font-medium text-accent-foreground transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97]"
           >
-            Agendá una Prueba de Manejo
+            Agenda una Prueba de Manejo
           </a>
         </div>
 
@@ -114,7 +114,7 @@ export function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="flex h-11 w-full items-center justify-center rounded-full bg-foreground text-[0.9rem] font-medium text-accent-foreground"
                 >
-                  Agendá una Prueba de Manejo
+                  Agenda una Prueba de Manejo
                 </a>
               </li>
             </ul>

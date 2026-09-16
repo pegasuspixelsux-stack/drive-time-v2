@@ -106,7 +106,7 @@ export function Footer() {
 
           <div className="flex flex-col gap-4">
             <h3 className="text-[0.9rem] font-medium text-foreground">
-              Mantenete Informado
+              Mantente Informado
             </h3>
             <p className="text-[0.9rem] text-muted">
               Novedades y ofertas, como máximo una vez por semana.

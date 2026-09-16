@@ -48,7 +48,7 @@ export function FinanceCalculator() {
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-7">
         <RangeSlider
-          label="Vehicle Price"
+          label="Precio del Vehículo"
           value={vehiclePrice}
           min={20000}
           max={250000}
@@ -57,7 +57,7 @@ export function FinanceCalculator() {
           formatValue={(v) => currency.format(v)}
         />
         <RangeSlider
-          label="Down Payment"
+          label="Pago Inicial"
           value={downPayment}
           min={0}
           max={vehiclePrice}
@@ -66,7 +66,7 @@ export function FinanceCalculator() {
           formatValue={(v) => currency.format(v)}
         />
         <RangeSlider
-          label="Interest Rate (APR)"
+          label="Tasa de Interés (TEA)"
           value={interestRate}
           min={0}
           max={15}
@@ -77,7 +77,7 @@ export function FinanceCalculator() {
 
         <div className="flex flex-col gap-3">
           <label className="text-[0.85rem] font-medium text-muted">
-            Loan Term
+            Plazo del Préstamo
           </label>
           <div className="flex flex-wrap gap-2">
             {LOAN_TERMS.map((term) => (
@@ -98,7 +98,7 @@ export function FinanceCalculator() {
                     transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                   />
                 )}
-                <span className="relative z-10">{term} mo</span>
+                <span className="relative z-10">{term} m.</span>
               </button>
             ))}
           </div>
@@ -108,7 +108,7 @@ export function FinanceCalculator() {
       <div className="flex flex-col justify-between gap-6 rounded-2xl border border-border bg-surface/70 p-6 sm:p-7">
         <div>
           <p className="text-[0.85rem] font-medium text-muted">
-            Estimated Monthly Payment
+            Cuota Mensual Estimada
           </p>
           <motion.p
             key={Math.round(payment)}
@@ -119,24 +119,24 @@ export function FinanceCalculator() {
           >
             {currencyPrecise.format(Number.isFinite(payment) ? payment : 0)}
           </motion.p>
-          <p className="mt-1 text-[0.8rem] text-muted-2">per month</p>
+          <p className="mt-1 text-[0.8rem] text-muted-2">por mes</p>
         </div>
 
         <div className="flex flex-col gap-3 border-t border-border pt-5 text-[0.85rem]">
           <div className="flex items-center justify-between">
-            <span className="text-muted">Loan amount</span>
+            <span className="text-muted">Monto del préstamo</span>
             <span className="font-medium text-foreground">
               {currency.format(principal)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted">Total interest</span>
+            <span className="text-muted">Interés total</span>
             <span className="font-medium text-foreground">
               {currency.format(Math.max(totalInterest, 0))}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted">Total cost</span>
+            <span className="text-muted">Costo total</span>
             <span className="font-medium text-foreground">
               {currency.format(Math.max(totalCost, 0))}
             </span>
@@ -144,7 +144,7 @@ export function FinanceCalculator() {
         </div>
 
         <p className="text-[0.75rem] leading-relaxed text-muted-2">
-          Estimate only. Actual rates and terms depend on credit approval.
+          Solo a modo de estimación. Las tasas y condiciones finales dependen de la aprobación crediticia.
         </p>
       </div>
     </div>

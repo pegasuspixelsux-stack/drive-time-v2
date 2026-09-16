@@ -25,6 +25,18 @@ const ESTIMATE_APR = 6.5;
 const ESTIMATE_TERM_MONTHS = 60;
 const ESTIMATE_DOWN_RATE = 0.1;
 
+const BODY_TYPE_LABELS: Record<string, string> = {
+  Sedan: "Sedán",
+  SUV: "SUV",
+  Coupe: "Cupé",
+};
+
+const FUEL_TYPE_LABELS: Record<string, string> = {
+  Gasoline: "Nafta",
+  Hybrid: "Híbrido",
+  Electric: "Eléctrico",
+};
+
 function estimateMonthlyPayment(price: number) {
   const principal = price * (1 - ESTIMATE_DOWN_RATE);
   const monthlyRate = ESTIMATE_APR / 100 / 12;
@@ -42,7 +54,7 @@ export function CarCard({ car }: { car: Car }) {
     >
       <Link
         href={`/inventory/${car.id}`}
-        aria-label="View details"
+        aria-label="Ver detalles"
         className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors duration-200 ease-out group-hover:border-foreground/40 group-hover:bg-foreground group-hover:text-accent-foreground"
       >
         <ArrowUpRight
@@ -60,7 +72,7 @@ export function CarCard({ car }: { car: Car }) {
           className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.08]"
         />
         <span className="glass absolute left-3 top-3 rounded-full px-3 py-1 text-[0.75rem] font-medium text-foreground">
-          {car.bodyType}
+          {BODY_TYPE_LABELS[car.bodyType] ?? car.bodyType}
         </span>
       </div>
 
@@ -89,7 +101,7 @@ export function CarCard({ car }: { car: Car }) {
           </div>
           <div className="hidden items-center gap-1.5 sm:flex">
             <FuelIcon size={14} />
-            <span>{car.fuelType}</span>
+            <span>{FUEL_TYPE_LABELS[car.fuelType] ?? car.fuelType}</span>
           </div>
         </div>
 
@@ -100,9 +112,9 @@ export function CarCard({ car }: { car: Car }) {
           <div className="text-right sm:text-left">
             <p className="text-[1.3rem] font-semibold leading-none text-foreground">
               {currencyPrecise.format(estimateMonthlyPayment(car.price))}
-              <span className="hidden sm:inline">/mo</span>
+              <span className="hidden sm:inline">/mes</span>
             </p>
-            <p className="mt-0.5 text-[0.7rem] text-muted sm:hidden">/mo</p>
+            <p className="mt-0.5 text-[0.7rem] text-muted sm:hidden">/mes</p>
           </div>
         </div>
       </div>

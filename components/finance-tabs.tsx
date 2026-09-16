@@ -16,9 +16,9 @@ export function FinanceTabs() {
           viewport={{ once: true, margin: "-100px" }}
           className="mb-10 flex flex-col items-center gap-3 text-center"
         >
-          <p className="text-[0.9rem] font-medium text-muted">Plan Your Purchase</p>
+          <p className="text-[0.9rem] font-medium text-muted">Planifica tu Compra</p>
           <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Estimate Payments or Value a Trade-In
+            Estima tus Cuotas o Tasa tu Vehículo Actual
           </h2>
         </motion.div>
 
@@ -37,7 +37,7 @@ export function FinanceTabs() {
 
             <div className="relative">
               <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
-                Financial Calculator
+                Calculadora Financiera
               </h3>
               <FinanceCalculator />
             </div>
@@ -51,7 +51,7 @@ export function FinanceTabs() {
 
             <div className="relative">
               <h3 className="mb-6 text-[1.05rem] font-semibold text-foreground">
-                Value Your Trade-In
+                Tasa tu Vehículo Actual
               </h3>
               <TradeInForm />
             </div>

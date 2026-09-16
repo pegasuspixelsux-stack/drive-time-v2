@@ -15,13 +15,13 @@ const PILLARS = [
     icon: Tag,
     title: "Precios Transparentes",
     description:
-      "Sin costos ocultos, sin recargos de último momento — el precio que ves es el precio que pagás.",
+      "Sin costos ocultos, sin recargos de último momento — el precio que ves es el precio que pagas.",
   },
   {
     icon: HandCoins,
     title: "Financiamiento Sin Presión",
     description:
-      "Explorá las opciones de financiamiento a tu propio ritmo, con condiciones adaptadas a tu presupuesto.",
+      "Explora las opciones de financiamiento a tu propio ritmo, con condiciones adaptadas a tu presupuesto.",
   },
   {
     icon: LifeBuoy,
@@ -54,7 +54,7 @@ export function WhyChooseUs() {
           <motion.p variants={fadeUp} className="max-w-lg text-[0.98rem] leading-relaxed text-muted">
             Cada vehículo de nuestra colección pasa por una rigurosa
             inspección multipunto mucho antes de ser publicado — porque la
-            confianza se gana en los detalles en los que nunca tenés que
+            confianza se gana en los detalles en los que nunca tienes que
             pensar. Fijamos precios de forma transparente, explicamos cada
             opción en un lenguaje claro y armamos el financiamiento en torno
             a tu vida, no a nuestra cuota.
@@ -62,7 +62,7 @@ export function WhyChooseUs() {
           <motion.p variants={fadeUp} className="max-w-lg text-[0.98rem] leading-relaxed text-muted">
             Desde tu primera prueba de manejo hasta años después, nuestro
             equipo sigue disponible — para que comprar un auto se sienta
-            menos como una negociación y más como una decisión que podés
+            menos como una negociación y más como una decisión que puedes
             tomar con confianza.
           </motion.p>
         </motion.div>

@@ -31,12 +31,12 @@ export function PreFooterHero() {
           variants={fadeUp}
           className="text-balance text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl"
         >
-          Ready to Hit the Open Road?
+          ¿Listo para Salir a la Ruta?
         </motion.h2>
 
         <motion.p variants={fadeUp} className="max-w-md text-[1rem] text-muted">
-          Visit our showroom for a private walkthrough, or speak with an
-          advisor to find the right fit for your drive.
+          Visita nuestro showroom para un recorrido privado, o habla con un
+          asesor para encontrar el auto ideal para ti.
         </motion.p>
 
         <motion.div
@@ -47,13 +47,13 @@ export function PreFooterHero() {
             href="#contact"
             className="flex h-12 items-center justify-center rounded-full bg-foreground px-7 text-[0.9rem] font-medium text-accent-foreground transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97]"
           >
-            Visit the Showroom
+            Visitar el Showroom
           </a>
           <a
             href="#contact"
             className="glass flex h-12 items-center justify-center rounded-full px-7 text-[0.9rem] font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
           >
-            Speak with an Advisor
+            Hablar con un Asesor
           </a>
         </motion.div>
       </motion.div>

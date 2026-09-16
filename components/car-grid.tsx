@@ -8,6 +8,13 @@ import { fadeUp, staggerContainer } from "@/lib/motion";
 
 const BODY_TYPE_PILLS = ["All", "Sedan", "SUV", "Coupe"] as const;
 
+const BODY_TYPE_LABELS: Record<(typeof BODY_TYPE_PILLS)[number], string> = {
+  All: "Todos",
+  Sedan: "Sedán",
+  SUV: "SUV",
+  Coupe: "Cupé",
+};
+
 export function CarGrid() {
   const [bodyType, setBodyType] =
     useState<(typeof BODY_TYPE_PILLS)[number]>("All");
@@ -26,11 +33,11 @@ export function CarGrid() {
           className="mb-12 hidden md:block"
         >
           <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Featured Inventory
+            Inventario Destacado
           </h2>
           <p className="mt-3 max-w-md text-[0.95rem] text-muted">
-            Nine hand-selected vehicles, each inspected and certified before
-            it reaches you.
+            Nueve vehículos seleccionados a mano, cada uno inspeccionado y
+            certificado antes de llegar a ti.
           </p>
         </motion.div>
 
@@ -46,7 +53,7 @@ export function CarGrid() {
                   : "border-border-strong text-muted hover:text-foreground"
               }`}
             >
-              {type}
+              {BODY_TYPE_LABELS[type]}
             </button>
           ))}
         </div>
@@ -67,7 +74,7 @@ export function CarGrid() {
           href="#inventory"
           className="mt-8 block text-center text-[0.9rem] font-medium text-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:decoration-foreground"
         >
-          View all inventory
+          Ver todo el inventario
         </a>
       </div>
     </section>
