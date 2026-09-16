@@ -21,6 +21,12 @@ const INVENTORY_TONE: Record<InventoryStatus, "green" | "amber" | "slate"> = {
   Sold: "slate",
 };
 
+const STATUS_LABELS: Record<InventoryStatus, string> = {
+  Available: "Disponible",
+  Reserved: "Reservado",
+  Sold: "Vendido",
+};
+
 export default function ControlPanelPage() {
   const [inventory] = useLocalStorage("dt_inventory", seedInventory);
   const [leads] = useLocalStorage("dt_leads", seedLeads);
@@ -35,13 +41,13 @@ export default function ControlPanelPage() {
   const activity = [
     ...leads.map((lead) => ({
       id: `lead-${lead.id}`,
-      title: `${lead.name} — new lead`,
-      subtitle: `Interested in ${lead.interestedIn}`,
+      title: `${lead.name} — nuevo prospecto`,
+      subtitle: `Interesado en ${lead.interestedIn}`,
       timestamp: lead.createdAt,
     })),
     ...messages.map((message) => ({
       id: `msg-${message.id}`,
-      title: `${message.name} sent a message`,
+      title: `${message.name} envió un mensaje`,
       subtitle: message.subject,
       timestamp: message.receivedAt,
     })),
@@ -54,20 +60,20 @@ export default function ControlPanelPage() {
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Control Panel</h1>
-        <p className="mt-1 text-sm text-slate-500">A snapshot of inventory, leads, and inbound activity.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Panel de Control</h1>
+        <p className="mt-1 text-sm text-slate-500">Un resumen del inventario, los prospectos y la actividad entrante.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Car} label="Total Inventory" value={String(inventory.length)} />
-        <StatCard icon={Target} label="Active Leads" value={String(activeLeads)} />
-        <StatCard icon={DollarSign} label="Monthly Revenue" value={currency.format(monthlyRevenue)} />
-        <StatCard icon={Mail} label="Pending Inquiries" value={String(pendingInquiries)} />
+        <StatCard icon={Car} label="Inventario Total" value={String(inventory.length)} />
+        <StatCard icon={Target} label="Prospectos Activos" value={String(activeLeads)} />
+        <StatCard icon={DollarSign} label="Ingresos Mensuales" value={currency.format(monthlyRevenue)} />
+        <StatCard icon={Mail} label="Consultas Pendientes" value={String(pendingInquiries)} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
         <motion.div variants={fadeUp} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-base font-semibold text-slate-900">Recent Activity</h2>
+          <h2 className="mb-4 text-base font-semibold text-slate-900">Actividad Reciente</h2>
           <ul className="flex flex-col divide-y divide-slate-100">
             {activity.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-4 py-3">
@@ -82,7 +88,7 @@ export default function ControlPanelPage() {
         </motion.div>
 
         <motion.div variants={fadeUp} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-base font-semibold text-slate-900">Recently Added Vehicles</h2>
+          <h2 className="mb-4 text-base font-semibold text-slate-900">Vehículos Agregados Recientemente</h2>
           <ul className="flex flex-col gap-3">
             {recentVehicles.map((item) => (
               <li key={item.id} className="flex items-center gap-3">
@@ -93,7 +99,7 @@ export default function ControlPanelPage() {
                   <p className="truncate text-sm font-medium text-slate-900">{item.make} {item.model}</p>
                   <p className="text-xs text-slate-500">{currency.format(item.price)}</p>
                 </div>
-                <StatusPill label={item.status} tone={INVENTORY_TONE[item.status]} />
+                <StatusPill label={STATUS_LABELS[item.status]} tone={INVENTORY_TONE[item.status]} />
               </li>
             ))}
           </ul>

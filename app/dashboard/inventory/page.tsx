@@ -26,6 +26,12 @@ const STATUS_TONE: Record<InventoryStatus, "green" | "amber" | "slate"> = {
   Sold: "slate",
 };
 
+const STATUS_LABELS: Record<InventoryStatus, string> = {
+  Available: "Disponible",
+  Reserved: "Reservado",
+  Sold: "Vendido",
+};
+
 type DraftVehicle = {
   make: string;
   model: string;
@@ -103,7 +109,7 @@ export default function InventoryPage() {
     const trimmedImage = draft.image.trim();
     if (trimmedImage && !isAllowedImageUrl(trimmedImage)) {
       setErrors({
-        image: `Image URL must be hosted on: ${ALLOWED_IMAGE_HOSTS.join(", ")}`,
+        image: `La URL de la imagen debe estar alojada en: ${ALLOWED_IMAGE_HOSTS.join(", ")}`,
       });
       return;
     }
@@ -163,8 +169,8 @@ export default function InventoryPage() {
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Inventory</h1>
-          <p className="mt-1 text-sm text-slate-500">{inventory.length} vehicles on the lot.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Inventario</h1>
+          <p className="mt-1 text-sm text-slate-500">{inventory.length} vehículos en el lote.</p>
         </div>
         <button
           type="button"
@@ -172,7 +178,7 @@ export default function InventoryPage() {
           className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
         >
           <Plus size={16} />
-          Add Vehicle
+          Agregar Vehículo
         </button>
       </div>
 
@@ -185,7 +191,7 @@ export default function InventoryPage() {
               setSearch(event.target.value);
               setConfirmDeleteId(null);
             }}
-            placeholder="Search make, model, or trim"
+            placeholder="Buscar marca, modelo o versión"
             className={`${dashboardInputClass} pl-10`}
           />
         </div>
@@ -197,10 +203,10 @@ export default function InventoryPage() {
           }}
           className={`${dashboardInputClass} sm:w-48`}
         >
-          <option value="All">All statuses</option>
+          <option value="All">Todos los estados</option>
           {STATUS_OPTIONS.map((status) => (
             <option key={status} value={status}>
-              {status}
+              {STATUS_LABELS[status]}
             </option>
           ))}
         </select>
@@ -210,12 +216,12 @@ export default function InventoryPage() {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-xs font-medium uppercase tracking-wide text-slate-500">
-              <th className="px-5 py-3">Vehicle</th>
-              <th className="px-5 py-3">Year</th>
-              <th className="px-5 py-3">Mileage</th>
-              <th className="px-5 py-3">Price</th>
-              <th className="px-5 py-3">Status</th>
-              <th className="px-5 py-3 text-right">Actions</th>
+              <th className="px-5 py-3">Vehículo</th>
+              <th className="px-5 py-3">Año</th>
+              <th className="px-5 py-3">Kilometraje</th>
+              <th className="px-5 py-3">Precio</th>
+              <th className="px-5 py-3">Estado</th>
+              <th className="px-5 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -236,13 +242,13 @@ export default function InventoryPage() {
                 <td className="px-5 py-3 text-slate-600">{item.mileage.toLocaleString()} km</td>
                 <td className="px-5 py-3 text-slate-600">{currency.format(item.price)}</td>
                 <td className="px-5 py-3">
-                  <StatusPill label={item.status} tone={STATUS_TONE[item.status]} />
+                  <StatusPill label={STATUS_LABELS[item.status]} tone={STATUS_TONE[item.status]} />
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
-                      aria-label="Edit vehicle"
+                      aria-label="Editar vehículo"
                       onClick={() => openEditModal(item)}
                       className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
                     >
@@ -250,7 +256,7 @@ export default function InventoryPage() {
                     </button>
                     <button
                       type="button"
-                      aria-label="Delete vehicle"
+                      aria-label="Eliminar vehículo"
                       onClick={() => handleDelete(item.id)}
                       className={`flex h-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${
                         confirmDeleteId === item.id
@@ -258,7 +264,7 @@ export default function InventoryPage() {
                           : "text-slate-500 hover:bg-red-50 hover:text-red-600"
                       }`}
                     >
-                      {confirmDeleteId === item.id ? "Confirm?" : <Trash2 size={15} />}
+                      {confirmDeleteId === item.id ? "¿Confirmar?" : <Trash2 size={15} />}
                     </button>
                   </div>
                 </td>
@@ -268,38 +274,38 @@ export default function InventoryPage() {
         </table>
       </motion.div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Edit Vehicle" : "Add Vehicle"}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Editar Vehículo" : "Agregar Vehículo"}>
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
-            <DashboardField label="Make">
+            <DashboardField label="Marca">
               <input value={draft.make} onChange={(e) => setDraft((d) => ({ ...d, make: e.target.value }))} className={dashboardInputClass} />
             </DashboardField>
-            <DashboardField label="Model">
+            <DashboardField label="Modelo">
               <input value={draft.model} onChange={(e) => setDraft((d) => ({ ...d, model: e.target.value }))} className={dashboardInputClass} />
             </DashboardField>
           </div>
-          <DashboardField label="Trim">
+          <DashboardField label="Versión">
             <input value={draft.trim} onChange={(e) => setDraft((d) => ({ ...d, trim: e.target.value }))} className={dashboardInputClass} />
           </DashboardField>
           <div className="grid grid-cols-3 gap-4">
-            <DashboardField label="Year">
+            <DashboardField label="Año">
               <input type="number" value={draft.year} onChange={(e) => setDraft((d) => ({ ...d, year: e.target.value }))} className={dashboardInputClass} />
             </DashboardField>
-            <DashboardField label="Price">
+            <DashboardField label="Precio">
               <input type="number" value={draft.price} onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))} className={dashboardInputClass} />
             </DashboardField>
-            <DashboardField label="Mileage">
+            <DashboardField label="Kilometraje">
               <input type="number" value={draft.mileage} onChange={(e) => setDraft((d) => ({ ...d, mileage: e.target.value }))} className={dashboardInputClass} />
             </DashboardField>
           </div>
-          <DashboardField label="Status">
+          <DashboardField label="Estado">
             <select value={draft.status} onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as InventoryStatus }))} className={dashboardInputClass}>
               {STATUS_OPTIONS.map((status) => (
-                <option key={status} value={status}>{status}</option>
+                <option key={status} value={status}>{STATUS_LABELS[status]}</option>
               ))}
             </select>
           </DashboardField>
-          <DashboardField label="Image URL">
+          <DashboardField label="URL de Imagen">
             <input
               value={draft.image}
               onChange={(e) => {
@@ -316,7 +322,7 @@ export default function InventoryPage() {
             disabled={!isDraftValid}
             className="mt-2 flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600"
           >
-            {editingId ? "Save Changes" : "Add Vehicle"}
+            {editingId ? "Guardar Cambios" : "Agregar Vehículo"}
           </button>
         </div>
       </Modal>
