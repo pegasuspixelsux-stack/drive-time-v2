@@ -92,10 +92,20 @@ const PRESET_LAYOUTS: Record<PostPreset, PresetLayout> = {
     textBlock: { titleY: CANVAS_SIZE - 170, priceY: CANVAS_SIZE - 100 },
   },
   "all-bottom": {
+    // watermark.y is unused for this preset -- generateInstagramGraphic computes it
+    // dynamically from the wrapped title's line count so the pill never overlaps a
+    // 2-line title (see WATERMARK_TITLE_GAP below).
     watermark: { x: PADDING, y: CANVAS_SIZE - 280, align: "left" },
     textBlock: { titleY: CANVAS_SIZE - 170, priceY: CANVAS_SIZE - 100 },
   },
 };
+
+const WATERMARK_FONT_SIZE = 22;
+const WATERMARK_PADDING_X = 20;
+const WATERMARK_PADDING_Y = 12;
+const WATERMARK_PILL_HEIGHT = WATERMARK_FONT_SIZE + WATERMARK_PADDING_Y * 2;
+const WATERMARK_TITLE_GAP = 28;
+const TITLE_ASCENT_FALLBACK = 46;
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
@@ -125,12 +135,10 @@ function drawWatermark(
   align: "left" | "right",
 ) {
   const label = "DRIVETIME";
-  ctx.font = "600 22px system-ui, sans-serif";
+  ctx.font = `600 ${WATERMARK_FONT_SIZE}px system-ui, sans-serif`;
   const textWidth = ctx.measureText(label).width;
-  const paddingX = 20;
-  const paddingY = 12;
-  const pillWidth = textWidth + paddingX * 2;
-  const pillHeight = 22 + paddingY * 2;
+  const pillWidth = textWidth + WATERMARK_PADDING_X * 2;
+  const pillHeight = WATERMARK_PILL_HEIGHT;
   const pillX = align === "right" ? x - pillWidth : x;
   const pillY = y;
 
@@ -141,7 +149,7 @@ function drawWatermark(
   ctx.fillStyle = "#0f172a";
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
-  ctx.fillText(label, pillX + paddingX, pillY + pillHeight / 2 + 1);
+  ctx.fillText(label, pillX + WATERMARK_PADDING_X, pillY + pillHeight / 2 + 1);
 }
 
 async function generateInstagramGraphic({
@@ -177,17 +185,34 @@ async function generateInstagramGraphic({
   ctx.fillRect(0, CANVAS_SIZE * 0.45, CANVAS_SIZE, CANVAS_SIZE * 0.55);
 
   const layout = PRESET_LAYOUTS[preset];
-  drawWatermark(ctx, layout.watermark.x, layout.watermark.y, layout.watermark.align);
-
   const maxTextWidth = CANVAS_SIZE - PADDING * 2;
+  const titleFont = "700 58px system-ui, sans-serif";
+  const titleLineHeight = 64;
+
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.font = titleFont;
+  const titleLines = wrapText(ctx, title, maxTextWidth).slice(0, 2);
+  const titleStartY = layout.textBlock.titleY - (titleLines.length - 1) * titleLineHeight;
+
+  // The "all-bottom" preset stacks the watermark directly above the title, so its
+  // vertical position must react to how many lines the title actually wrapped to --
+  // a static offset overlaps a 2-line title (e.g. "2023 Land Rover Range Rover Sport").
+  // Measure the real ascent of the first title line (ctx.font is still the title font
+  // here) and place the pill's bottom edge a fixed gap above the topmost glyph.
+  let watermarkY = layout.watermark.y;
+  if (preset === "all-bottom") {
+    const titleAscent =
+      ctx.measureText(titleLines[0] ?? "").actualBoundingBoxAscent || TITLE_ASCENT_FALLBACK;
+    const titleTopY = titleStartY - titleAscent;
+    watermarkY = titleTopY - WATERMARK_TITLE_GAP - WATERMARK_PILL_HEIGHT;
+  }
+  drawWatermark(ctx, layout.watermark.x, watermarkY, layout.watermark.align);
 
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
-  ctx.font = "700 58px system-ui, sans-serif";
-  const titleLines = wrapText(ctx, title, maxTextWidth).slice(0, 2);
-  const titleLineHeight = 64;
-  const titleStartY = layout.textBlock.titleY - (titleLines.length - 1) * titleLineHeight;
+  ctx.font = titleFont;
   titleLines.forEach((line, i) => {
     ctx.fillText(line, PADDING, titleStartY + i * titleLineHeight);
   });
@@ -211,7 +236,7 @@ async function generateInstagramGraphic({
 const WATERMARK_POSITION_CLASS: Record<PostPreset, string> = {
   "bottom-top-logo": "top-3 right-3",
   "bottom-left-logo": "top-3 left-3",
-  "all-bottom": "bottom-24 left-3",
+  "all-bottom": "bottom-32 left-3",
 };
 
 const PRESET_DOT_CLASS: Record<PostPreset, string> = {
