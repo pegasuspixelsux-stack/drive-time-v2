@@ -229,10 +229,12 @@ async function generateInstagramGraphic({
   });
 }
 
-const WATERMARK_POSITION_CLASS: Record<PostPreset, string> = {
+// "all-bottom" is intentionally absent here: its watermark renders in-flow above the
+// title inside the bottom text block (see the preview markup below), not via a
+// separately-positioned absolute class like the other two presets.
+const WATERMARK_POSITION_CLASS: Record<Exclude<PostPreset, "all-bottom">, string> = {
   "bottom-top-logo": "top-3 right-3",
   "bottom-left-logo": "top-3 left-3",
-  "all-bottom": "bottom-32 left-3",
 };
 
 const PRESET_DOT_CLASS: Record<PostPreset, string> = {
@@ -345,13 +347,20 @@ export function InstagramPostModal({
                   />
                   <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-                  <span
-                    className={`absolute flex items-center rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold tracking-wide text-slate-900 ${WATERMARK_POSITION_CLASS[preset]}`}
-                  >
-                    DRIVETIME
-                  </span>
+                  {preset !== "all-bottom" && (
+                    <span
+                      className={`absolute flex items-center rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold tracking-wide text-slate-900 ${WATERMARK_POSITION_CLASS[preset]}`}
+                    >
+                      DRIVETIME
+                    </span>
+                  )}
 
                   <div className="absolute inset-x-4 bottom-4">
+                    {preset === "all-bottom" && (
+                      <span className="mb-2 inline-flex items-center rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold tracking-wide text-slate-900">
+                        DRIVETIME
+                      </span>
+                    )}
                     <p className="line-clamp-2 text-xl font-bold leading-tight text-white">
                       {title}
                     </p>
