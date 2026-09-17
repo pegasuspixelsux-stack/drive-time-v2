@@ -219,11 +219,7 @@ async function generateInstagramGraphic({
 
   ctx.font = "600 44px system-ui, sans-serif";
   ctx.fillStyle = "#e2e8f0";
-  ctx.fillText(
-    priceText,
-    PADDING,
-    layout.textBlock.priceY + (titleLines.length - 1) * titleLineHeight,
-  );
+  ctx.fillText(priceText, PADDING, layout.textBlock.priceY);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
