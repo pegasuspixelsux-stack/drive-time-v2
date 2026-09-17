@@ -3,10 +3,11 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search, Sparkles, Trash2 } from "lucide-react";
 import { Modal } from "@/components/dashboard/modal";
 import { StatusPill } from "@/components/dashboard/status-pill";
 import { DashboardField, dashboardInputClass } from "@/components/dashboard/form-field";
+import { InstagramPostModal } from "@/components/dashboard/instagram-post-modal";
 import { useLocalStorage } from "@/lib/use-local-storage";
 import { seedInventory, type InventoryItem, type InventoryStatus } from "@/lib/dashboard-data";
 import { fadeUp, staggerContainer } from "@/lib/motion";
@@ -76,6 +77,8 @@ export default function InventoryPage() {
   const [draft, setDraft] = useState<DraftVehicle>(EMPTY_DRAFT);
   const [errors, setErrors] = useState<{ image?: string }>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [instagramItem, setInstagramItem] = useState<InventoryItem | null>(null);
+  const [instagramOpen, setInstagramOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return inventory.filter((item) => {
@@ -248,6 +251,17 @@ export default function InventoryPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
+                      aria-label="Generar publicación para Instagram"
+                      onClick={() => {
+                        setInstagramItem(item);
+                        setInstagramOpen(true);
+                      }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    >
+                      <Sparkles size={15} />
+                    </button>
+                    <button
+                      type="button"
                       aria-label="Editar vehículo"
                       onClick={() => openEditModal(item)}
                       className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
@@ -326,6 +340,12 @@ export default function InventoryPage() {
           </button>
         </div>
       </Modal>
+
+      <InstagramPostModal
+        open={instagramOpen}
+        onClose={() => setInstagramOpen(false)}
+        item={instagramItem}
+      />
     </motion.div>
   );
 }
