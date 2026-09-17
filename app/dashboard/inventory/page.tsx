@@ -224,7 +224,9 @@ export default function InventoryPage() {
               <th className="px-5 py-3">Kilometraje</th>
               <th className="px-5 py-3">Precio</th>
               <th className="px-5 py-3">Estado</th>
-              <th className="px-5 py-3 text-right">Acciones</th>
+              <th className="sticky right-0 bg-white px-5 py-3 text-right shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -247,7 +249,7 @@ export default function InventoryPage() {
                 <td className="px-5 py-3">
                   <StatusPill label={STATUS_LABELS[item.status]} tone={STATUS_TONE[item.status]} />
                 </td>
-                <td className="px-5 py-3">
+                <td className="sticky right-0 bg-white px-5 py-3 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
