@@ -6,14 +6,13 @@ import { Download, Edit3, ImageUp, Minus, Plus, RotateCcw, X } from "lucide-reac
 import type { InventoryItem } from "@/lib/dashboard-data";
 import { carDetails, type CarDetailImage } from "@/data/car-details";
 
-type PostPreset = "bottom-left-logo" | "bottom-top-logo" | "all-bottom";
+type LogoPosition = "left" | "center" | "right";
 type PostFormat = "square" | "feed" | "story";
-type GradientTheme = "dark" | "light";
 
-const PRESET_OPTIONS: { id: PostPreset; label: string }[] = [
-  { id: "bottom-left-logo", label: "Logo Izquierda" },
-  { id: "bottom-top-logo", label: "Logo Arriba" },
-  { id: "all-bottom", label: "Todo Abajo" },
+const LOGO_POSITION_OPTIONS: { id: LogoPosition; label: string }[] = [
+  { id: "left", label: "Izquierda" },
+  { id: "center", label: "Centro" },
+  { id: "right", label: "Derecha" },
 ];
 
 const FORMAT_OPTIONS: {
@@ -28,10 +27,9 @@ const FORMAT_OPTIONS: {
   { id: "story", label: "Historia 9:16", width: 1080, height: 1920, aspectClass: "aspect-[9/16]" },
 ];
 
-const GRADIENT_OPTIONS: { id: GradientTheme; label: string }[] = [
-  { id: "dark", label: "Oscuro" },
-  { id: "light", label: "Claro" },
-];
+// Dealers pick their own brand color for the gradient instead of a fixed dark/light choice.
+// Text and stripe contrast then follow automatically from that color's luminance.
+const DEFAULT_GRADIENT_COLOR = "#000000";
 
 const GRADIENT_INTENSITY_MIN = 40;
 const GRADIENT_INTENSITY_MAX = 100;
@@ -77,7 +75,19 @@ function slugify(value: string) {
 }
 
 function defaultTitle(item: InventoryItem) {
-  return `${item.year} ${item.make} ${item.model}`;
+  return `${item.make} ${item.model}`;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace("#", "");
+  const value = parseInt(clean.length === 3 ? clean.replace(/(.)/g, "$1$1") : clean, 16);
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+}
+
+// Whether a color reads as "dark" (needs light text/overlay on top of it), using the
+// standard perceptual-luminance weighting rather than a plain RGB average.
+function isColorDark([r, g, b]: [number, number, number]): boolean {
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.5;
 }
 
 function defaultPriceText(item: InventoryItem) {
@@ -91,10 +101,31 @@ const PADDING = 56;
 const DEFAULT_LOGO_SRC = "/drivetime-logo.svg";
 const LOGO_MAX_WIDTH = 220;
 const LOGO_MAX_HEIGHT = 64;
-const LOGO_GAP = 28;
 
 const FOOTER_STRIPE_HEIGHT = 64;
-const FOOTER_STRIPE_TEXT = "Visítenos @drivetime";
+
+// The dealership's Instagram handle for the stripe's "Visítenos" line. Staff can override it
+// per-graphic (see "Instagram" in the edit pane) the same way they can override the logo.
+const DEFAULT_INSTAGRAM_HANDLE = "@drivetime";
+
+const DISCLAIMER_TEXT =
+  "Pago calculado con 30% de seña, 6.9% de interés en 60 cuotas sujeto a aprobación de crédito.";
+
+// The single vertical stride that governs every gap AND every multi-line block in the
+// bottom text stack (title / specs+pricing / disclaimer), for all three presets. Title
+// lines use a 2x multiple of it; every other stride -- the gap between rows and the gap
+// between a stacked pricing line and its total-price line -- is exactly 1x. This is what
+// keeps the grid mathematically consistent instead of each row inventing its own spacing.
+const LINE_HEIGHT = 16;
+const TITLE_LINE_HEIGHT = LINE_HEIGHT * 2;
+const ASCENT_FALLBACK = 24;
+const DESCENT_FALLBACK = 14;
+
+const TITLE_FONT = "800 58px system-ui, sans-serif";
+const SPECS_FONT = "600 32px system-ui, sans-serif";
+const PAYMENT_FONT = "700 46px system-ui, sans-serif";
+const TOTAL_PRICE_FONT = "500 26px system-ui, sans-serif";
+const DISCLAIMER_FONT = "400 16px system-ui, sans-serif";
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -131,29 +162,37 @@ function fitContain(naturalWidth: number, naturalHeight: number, maxWidth: numbe
 }
 
 // Draws the brand logo fit-contain within LOGO_MAX_WIDTH x LOGO_MAX_HEIGHT, anchored at
-// (x, y) — y is the box's TOP edge, x is the left/right anchor per `align`. Returns the box
-// actually drawn so callers with height-dependent layout (the "all-bottom" preset) can react.
+// (x, y) — y is the box's TOP edge, x is the left/right/center anchor per `align`.
 function drawLogo(
   ctx: CanvasRenderingContext2D,
   logoImg: HTMLImageElement,
   x: number,
   y: number,
-  align: "left" | "right",
+  align: LogoPosition,
 ): { width: number; height: number } {
   const box = fitContain(logoImg.width, logoImg.height, LOGO_MAX_WIDTH, LOGO_MAX_HEIGHT);
-  const drawX = align === "right" ? x - box.width : x;
+  const drawX = align === "right" ? x - box.width : align === "center" ? x - box.width / 2 : x;
   ctx.drawImage(logoImg, drawX, y, box.width, box.height);
   return box;
 }
 
 // A solid opaque band pinned to the true canvas bottom, drawn dead last so it always sits
-// on top of the image/gradient/preset content. Every preset's bottom-anchored math is
-// computed against `contentBottom` (canvasHeight - FOOTER_STRIPE_HEIGHT), not the raw
-// canvas height, so nothing is ever drawn underneath this stripe in the first place. Carries
-// both the dealer tagline (left) and "Link in Bio" (right) -- the single shared home for
-// both across all three presets, so no preset draws its own separate "Link in Bio" anymore.
-function drawFooterStripe(ctx: CanvasRenderingContext2D, width: number, height: number, isDark: boolean) {
-  ctx.fillStyle = isDark ? "#000000" : "#ffffff";
+// on top of the image/gradient/content. Every bottom-anchored element positions itself
+// against `contentBottom` (canvasHeight - FOOTER_STRIPE_HEIGHT), not the raw canvas height,
+// so nothing is ever drawn underneath this stripe in the first place. Filled with the
+// dealer's own picked brand color (not a fixed black/white) so the stripe reads as part of
+// the same brand gradient as the overlay above it. Carries both the dealer tagline (built
+// from the editable Instagram handle) and "Link in Bio" -- plain reference text, not a
+// clickable link, since this is a flattened PNG -- centered together as one line.
+function drawFooterStripe(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  stripeColor: string,
+  isDark: boolean,
+  instagramHandle: string,
+) {
+  ctx.fillStyle = stripeColor;
   ctx.fillRect(0, height - FOOTER_STRIPE_HEIGHT, width, FOOTER_STRIPE_HEIGHT);
 
   const textColor = isDark ? "#ffffff" : "#0f172a";
@@ -161,123 +200,127 @@ function drawFooterStripe(ctx: CanvasRenderingContext2D, width: number, height: 
   ctx.font = "600 30px system-ui, sans-serif";
   ctx.fillStyle = textColor;
   ctx.textBaseline = "middle";
-
-  ctx.textAlign = "left";
-  ctx.fillText(FOOTER_STRIPE_TEXT, PADDING, stripeCenterY);
-
-  ctx.textAlign = "right";
-  ctx.fillText("Link in Bio", width - PADDING, stripeCenterY);
+  ctx.textAlign = "center";
+  ctx.fillText(`Visítenos ${instagramHandle}   •   Link in Bio`, width / 2, stripeCenterY);
 }
-
-interface PresetLayout {
-  logo: { x: number; y: number; align: "left" | "right" };
-  textBlock: { titleY: number; priceY: number };
-}
-
-// Only used by the "bottom-top-logo" and "all-bottom" presets — "bottom-left-logo" has an
-// entirely bespoke layout (see drawPreset1/the preset1 preview branch) and never reads this.
-function getPresetLayout(
-  preset: Exclude<PostPreset, "bottom-left-logo">,
-  width: number,
-  height: number,
-): PresetLayout {
-  const textBlock = { titleY: height - 170, priceY: height - 100 };
-  if (preset === "bottom-top-logo") {
-    return { logo: { x: width - PADDING, y: PADDING, align: "right" }, textBlock };
-  }
-  // "all-bottom": logo.y is unused here -- generateInstagramGraphic computes it
-  // dynamically from the wrapped title's line count so the logo never overlaps a
-  // 2-line title (see LOGO_GAP below).
-  return { logo: { x: PADDING, y: height - 280, align: "left" }, textBlock };
-}
-
-const TITLE_ASCENT_FALLBACK = 46;
 
 /**
- * Preset 1 ("bottom-left-logo"): a bespoke, entirely bottom-up layout. Every block's
- * position is derived from the block below it's own actual measured edge — never from a
- * static Y value that a sibling separately "compensates" for — so wrapping text can never
- * silently desync two unrelated blocks (the exact bug class the "all-bottom" preset hit
- * earlier: a title wrapping to 2 lines pushed a *different* element by a duplicated offset).
+ * The bottom text block, built bottom-up (disclaimer → specs/total price → title → monthly
+ * payment) so every row's position is derived from the ACTUAL measured edge of the row below
+ * it — never from a static Y value that a sibling separately "compensates" for — so wrapping
+ * text can never silently desync two unrelated rows. Every gap is exactly one LINE_HEIGHT;
+ * the title's wrapped-line stride is exactly two. The brand logo is always drawn independently
+ * at the top of the canvas (see the caller's logoPosition handling), entirely decoupled from
+ * this block's height.
  */
-function drawPreset1(
+function drawBottomBlock(
   ctx: CanvasRenderingContext2D,
   {
     width,
-    height,
+    contentBottom,
+    title,
     item,
     priceText,
-    logoImg,
     primaryColor,
     secondaryColor,
+    disclaimerColor,
   }: {
     width: number;
-    height: number;
+    contentBottom: number;
+    title: string;
     item: InventoryItem;
     priceText: string;
-    logoImg: HTMLImageElement;
     primaryColor: string;
     secondaryColor: string;
+    disclaimerColor: string;
   },
 ) {
   const maxTextWidth = width - PADDING * 2;
-
-  // --- Top brand header: the logo, left-aligned (matches this preset's "Logo Izquierda"
-  // identity). "Link in Bio" now lives on the shared footer stripe (see drawFooterStripe),
-  // not here.
-  drawLogo(ctx, logoImg, PADDING, PADDING, "left");
-
-  // --- Bottom content, built bottom-up. This stack's bottom-most element is row 2.
-  const row2Font = "600 32px system-ui, sans-serif";
-  const paymentFont = "700 46px system-ui, sans-serif";
-  const totalFont = "500 26px system-ui, sans-serif";
-  const row1Font = "800 62px system-ui, sans-serif";
-  const row1LineHeight = 68;
-  const row1Gap = 28;
-
-  const row2BaselineY = height - PADDING + 4;
-
-  const totalPriceText = currency.format(item.price);
-  ctx.textAlign = "right";
   ctx.textBaseline = "alphabetic";
-  ctx.font = paymentFont;
-  ctx.fillStyle = primaryColor;
-  ctx.fillText(priceText, width - PADDING, row2BaselineY);
-  ctx.font = totalFont;
-  ctx.fillStyle = secondaryColor;
-  ctx.fillText(totalPriceText, width - PADDING, row2BaselineY + 34);
 
+  // Row D (bottom-most): the disclaimer, centered, sitting LINE_HEIGHT above the stripe.
+  ctx.font = DISCLAIMER_FONT;
+  const disclaimerLines = wrapText(ctx, DISCLAIMER_TEXT, maxTextWidth).slice(0, 2);
+  const disclaimerLastBaselineY = contentBottom - LINE_HEIGHT;
+  const disclaimerStartY = disclaimerLastBaselineY - (disclaimerLines.length - 1) * LINE_HEIGHT;
+  const disclaimerAscent =
+    ctx.measureText(disclaimerLines[0] ?? "").actualBoundingBoxAscent || ASCENT_FALLBACK;
+  const disclaimerTopY = disclaimerStartY - disclaimerAscent;
+
+  // Row C: specs (left) + total cash price (right), sitting LINE_HEIGHT above the
+  // disclaimer's top edge. Both share one baseline, so the row's vertical footprint is
+  // governed by whichever of the two fonts actually has the bigger ascent/descent --
+  // measured, not assumed.
+  const totalPriceText = currency.format(item.price);
+  ctx.font = TOTAL_PRICE_FONT;
+  const totalPriceMetrics = ctx.measureText(totalPriceText);
   const fuelLabel = FUEL_TYPE_LABELS[item.fuelType] ?? item.fuelType;
   const leftSegments = [String(item.year), `${mileageFormat.format(item.mileage)} km`, fuelLabel];
-  ctx.font = row2Font;
+  ctx.font = SPECS_FONT;
+  const specsMetrics = ctx.measureText(leftSegments[0]);
+
+  const row3Descent =
+    Math.max(specsMetrics.actualBoundingBoxDescent || 0, totalPriceMetrics.actualBoundingBoxDescent || 0) ||
+    DESCENT_FALLBACK;
+  const row3Ascent =
+    Math.max(specsMetrics.actualBoundingBoxAscent || 0, totalPriceMetrics.actualBoundingBoxAscent || 0) ||
+    ASCENT_FALLBACK;
+  const row3BaselineY = disclaimerTopY - LINE_HEIGHT - row3Descent;
+  const row3TopY = row3BaselineY - row3Ascent;
+
+  // Row B: title, sitting LINE_HEIGHT above row C's top edge, wrapping up to 2 lines at
+  // TITLE_LINE_HEIGHT (2x) stride.
+  ctx.font = TITLE_FONT;
+  const titleLines = wrapText(ctx, title, maxTextWidth).slice(0, 2);
+  const titleLastLineDescent =
+    ctx.measureText(titleLines[titleLines.length - 1] ?? "").actualBoundingBoxDescent || DESCENT_FALLBACK;
+  const titleLastBaselineY = row3TopY - LINE_HEIGHT - titleLastLineDescent;
+  const titleStartY = titleLastBaselineY - (titleLines.length - 1) * TITLE_LINE_HEIGHT;
+  const titleTopY =
+    titleStartY - (ctx.measureText(titleLines[0] ?? "").actualBoundingBoxAscent || ASCENT_FALLBACK);
+
+  // Row A (topmost): the monthly payment, called out above the heading, sitting LINE_HEIGHT
+  // above the title's top edge.
+  ctx.font = PAYMENT_FONT;
+  const paymentDescent = ctx.measureText(priceText).actualBoundingBoxDescent || DESCENT_FALLBACK;
+  const paymentBaselineY = titleTopY - LINE_HEIGHT - paymentDescent;
+
+  // --- draw row A: payment ---
+  ctx.font = PAYMENT_FONT;
+  ctx.fillStyle = primaryColor;
+  ctx.textAlign = "right";
+  ctx.fillText(priceText, width - PADDING, paymentBaselineY);
+
+  // --- draw row B: title ---
+  ctx.font = TITLE_FONT;
+  ctx.fillStyle = primaryColor;
+  ctx.textAlign = "left";
+  titleLines.forEach((line, i) => {
+    ctx.fillText(line, PADDING, titleStartY + i * TITLE_LINE_HEIGHT);
+  });
+
+  // --- draw row C: specs (left) + total cash price (right) ---
+  ctx.font = SPECS_FONT;
   ctx.fillStyle = secondaryColor;
   ctx.textAlign = "left";
   let cursorX = PADDING;
   leftSegments.forEach((segment, index) => {
     const text = index < leftSegments.length - 1 ? `${segment}  |  ` : segment;
-    ctx.fillText(text, cursorX, row2BaselineY);
+    ctx.fillText(text, cursorX, row3BaselineY);
     cursorX += ctx.measureText(text).width;
   });
 
-  const row2Ascent = ctx.measureText(leftSegments[0]).actualBoundingBoxAscent || 28;
-  const row2TopY = row2BaselineY - row2Ascent;
+  ctx.font = TOTAL_PRICE_FONT;
+  ctx.fillStyle = secondaryColor;
+  ctx.textAlign = "right";
+  ctx.fillText(totalPriceText, width - PADDING, row3BaselineY);
 
-  // Row 1 (make + model) sits a fixed gap above row 2's top edge, and self-compensates
-  // for wrapping to 2 lines the same way the original title block did — but critically,
-  // nothing else on the canvas reads titleLines.length, so there is nothing left to
-  // accidentally double-compensate.
-  ctx.font = row1Font;
-  const titleLines = wrapText(ctx, `${item.make} ${item.model}`, maxTextWidth).slice(0, 2);
-  const lastLine = titleLines[titleLines.length - 1] ?? "";
-  const lastLineMetrics = ctx.measureText(lastLine);
-  const row1Descent = lastLineMetrics.actualBoundingBoxDescent || 14;
-  const row1LastLineBaselineY = row2TopY - row1Gap - row1Descent;
-  const row1StartY = row1LastLineBaselineY - (titleLines.length - 1) * row1LineHeight;
-
-  ctx.fillStyle = primaryColor;
-  ctx.textAlign = "left";
-  titleLines.forEach((line, i) => {
-    ctx.fillText(line, PADDING, row1StartY + i * row1LineHeight);
+  // --- draw row D: disclaimer, centered ---
+  ctx.font = DISCLAIMER_FONT;
+  ctx.fillStyle = disclaimerColor;
+  ctx.textAlign = "center";
+  disclaimerLines.forEach((line, i) => {
+    ctx.fillText(line, width / 2, disclaimerStartY + i * LINE_HEIGHT);
   });
 }
 
@@ -286,20 +329,22 @@ async function generateInstagramGraphic({
   logoSrc,
   title,
   priceText,
-  preset,
+  logoPosition,
   format,
-  gradientTheme,
+  gradientColor,
   gradientIntensity,
+  instagramHandle,
   item,
 }: {
   imageSrc: string;
   logoSrc: string;
   title: string;
   priceText: string;
-  preset: PostPreset;
+  logoPosition: LogoPosition;
   format: PostFormat;
-  gradientTheme: GradientTheme;
+  gradientColor: string;
   gradientIntensity: number;
+  instagramHandle: string;
   item: InventoryItem;
 }): Promise<Blob> {
   const { width, height } = FORMAT_OPTIONS.find((f) => f.id === format) ?? FORMAT_OPTIONS[0];
@@ -319,9 +364,10 @@ async function generateInstagramGraphic({
   const offsetY = (height - drawHeight) / 2;
   ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
-  const isDark = gradientTheme === "dark";
+  const [r, g, b] = hexToRgb(gradientColor);
+  const isDark = isColorDark([r, g, b]);
   const gradTop = height * 0.45;
-  const gradientRgb = isDark ? "0, 0, 0" : "255, 255, 255";
+  const gradientRgb = `${r}, ${g}, ${b}`;
   const gradientAlpha = gradientIntensity / 100;
   const gradient = ctx.createLinearGradient(0, gradTop, 0, height);
   gradient.addColorStop(0, `rgba(${gradientRgb}, 0)`);
@@ -331,55 +377,32 @@ async function generateInstagramGraphic({
 
   const primaryColor = isDark ? "#ffffff" : "#0f172a";
   const secondaryColor = isDark ? "#e2e8f0" : "#334155";
+  const disclaimerColor = isDark ? "rgba(226, 232, 240, 0.65)" : "rgba(51, 65, 85, 0.65)";
 
-  // Every bottom-anchored element in every preset positions itself against contentBottom,
-  // not the raw canvas height, leaving a clear FOOTER_STRIPE_HEIGHT band for the stripe
-  // drawn at the very end -- nothing above ever needs to know the stripe exists.
+  // Every bottom-anchored element positions itself against contentBottom, not the raw canvas
+  // height, leaving a clear FOOTER_STRIPE_HEIGHT band for the stripe drawn at the very end --
+  // nothing above ever needs to know the stripe exists.
   const contentBottom = height - FOOTER_STRIPE_HEIGHT;
 
-  if (preset === "bottom-left-logo") {
-    drawPreset1(ctx, { width, height: contentBottom, item, priceText, logoImg, primaryColor, secondaryColor });
-  } else {
-    const layout = getPresetLayout(preset, width, contentBottom);
-    const maxTextWidth = width - PADDING * 2;
-    const titleFont = "700 58px system-ui, sans-serif";
-    const titleLineHeight = 64;
+  // The logo is drawn independently at the top of the canvas, decoupled from the bottom
+  // block's height. Its horizontal position (left / center / right) is the only layout
+  // choice the dealer makes -- everything else in the bottom block is fixed.
+  const logoX =
+    logoPosition === "left" ? PADDING : logoPosition === "right" ? width - PADDING : width / 2;
+  drawLogo(ctx, logoImg, logoX, PADDING, logoPosition);
 
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
-    ctx.font = titleFont;
-    const titleLines = wrapText(ctx, title, maxTextWidth).slice(0, 2);
-    const titleStartY = layout.textBlock.titleY - (titleLines.length - 1) * titleLineHeight;
+  drawBottomBlock(ctx, {
+    width,
+    contentBottom,
+    title,
+    item,
+    priceText,
+    primaryColor,
+    secondaryColor,
+    disclaimerColor,
+  });
 
-    // The "all-bottom" preset stacks the logo directly above the title, so its vertical
-    // position must react to how many lines the title actually wrapped to -- a static
-    // offset overlaps a 2-line title (e.g. "2023 Land Rover Range Rover Sport"). Measure
-    // the real ascent of the first title line (ctx.font is still the title font here) and
-    // place the logo's bottom edge a fixed gap above the topmost glyph.
-    let logoY = layout.logo.y;
-    if (preset === "all-bottom") {
-      const titleAscent =
-        ctx.measureText(titleLines[0] ?? "").actualBoundingBoxAscent || TITLE_ASCENT_FALLBACK;
-      const titleTopY = titleStartY - titleAscent;
-      const logoBoxHeight = fitContain(logoImg.width, logoImg.height, LOGO_MAX_WIDTH, LOGO_MAX_HEIGHT).height;
-      logoY = titleTopY - LOGO_GAP - logoBoxHeight;
-    }
-    drawLogo(ctx, logoImg, layout.logo.x, logoY, layout.logo.align);
-
-    ctx.fillStyle = primaryColor;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
-    ctx.font = titleFont;
-    titleLines.forEach((line, i) => {
-      ctx.fillText(line, PADDING, titleStartY + i * titleLineHeight);
-    });
-
-    ctx.font = "600 44px system-ui, sans-serif";
-    ctx.fillStyle = secondaryColor;
-    ctx.fillText(priceText, PADDING, layout.textBlock.priceY);
-  }
-
-  drawFooterStripe(ctx, width, height, isDark);
+  drawFooterStripe(ctx, width, height, gradientColor, isDark, instagramHandle);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -388,12 +411,6 @@ async function generateInstagramGraphic({
     }, "image/png");
   });
 }
-
-const PRESET_DOT_CLASS: Record<PostPreset, string> = {
-  "bottom-top-logo": "right-1 top-1",
-  "bottom-left-logo": "left-1 top-1",
-  "all-bottom": "bottom-2 left-1",
-};
 
 export function InstagramPostModal({
   open,
@@ -414,11 +431,12 @@ export function InstagramPostModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [title, setTitle] = useState("");
   const [priceText, setPriceText] = useState("");
-  const [preset, setPreset] = useState<PostPreset>("bottom-top-logo");
+  const [logoPosition, setLogoPosition] = useState<LogoPosition>("right");
   const [format, setFormat] = useState<PostFormat>("square");
-  const [gradientTheme, setGradientTheme] = useState<GradientTheme>("dark");
+  const [gradientColor, setGradientColor] = useState(DEFAULT_GRADIENT_COLOR);
   const [gradientIntensity, setGradientIntensity] = useState(GRADIENT_INTENSITY_DEFAULT);
   const [logoSrc, setLogoSrc] = useState(DEFAULT_LOGO_SRC);
+  const [instagramHandle, setInstagramHandle] = useState(DEFAULT_INSTAGRAM_HANDLE);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const logoFileInputRef = useRef<HTMLInputElement>(null);
@@ -428,11 +446,12 @@ export function InstagramPostModal({
     setSelectedImageIndex(0);
     setTitle(defaultTitle(item));
     setPriceText(defaultPriceText(item));
-    setPreset("bottom-top-logo");
+    setLogoPosition("right");
     setFormat("square");
-    setGradientTheme("dark");
+    setGradientColor(DEFAULT_GRADIENT_COLOR);
     setGradientIntensity(GRADIENT_INTENSITY_DEFAULT);
     setLogoSrc(DEFAULT_LOGO_SRC);
+    setInstagramHandle(DEFAULT_INSTAGRAM_HANDLE);
     setError(null);
   }, [open, item]);
 
@@ -458,10 +477,11 @@ export function InstagramPostModal({
         logoSrc,
         title,
         priceText,
-        preset,
+        logoPosition,
         format,
-        gradientTheme,
+        gradientColor,
         gradientIntensity,
+        instagramHandle,
         item,
       });
       const url = URL.createObjectURL(blob);
@@ -481,7 +501,8 @@ export function InstagramPostModal({
 
   const activeImage = gallery[selectedImageIndex] ?? { src: item.image, alt: item.model };
   const activeFormat = FORMAT_OPTIONS.find((f) => f.id === format) ?? FORMAT_OPTIONS[0];
-  const isDark = gradientTheme === "dark";
+  const [gradR, gradG, gradB] = hexToRgb(gradientColor);
+  const isDark = isColorDark([gradR, gradG, gradB]);
   const primaryTextClass = isDark ? "text-white" : "text-slate-900";
   const secondaryTextClass = isDark ? "text-slate-200" : "text-slate-600";
   const mutedTextClass = isDark ? "text-slate-300" : "text-slate-500";
@@ -533,68 +554,66 @@ export function InstagramPostModal({
                   <div
                     className="absolute inset-x-0 bottom-0 h-2/3"
                     style={{
-                      background: `linear-gradient(to top, rgba(${
-                        isDark ? "0, 0, 0" : "255, 255, 255"
-                      }, ${gradientIntensity / 100}) 0%, transparent 100%)`,
+                      background: `linear-gradient(to top, rgba(${gradR}, ${gradG}, ${gradB}, ${
+                        gradientIntensity / 100
+                      }) 0%, transparent 100%)`,
                     }}
                   />
 
-                  {preset === "bottom-left-logo" ? (
-                    <>
-                      <img
-                        src={logoSrc}
-                        alt="Logo"
-                        className="absolute left-3 top-3 h-8 max-w-[140px] object-contain object-left"
-                      />
-                      <div className="absolute inset-x-4 bottom-11 flex flex-col gap-1.5">
-                        <p className={`line-clamp-2 text-2xl font-extrabold leading-tight ${primaryTextClass}`}>
-                          {item.make} {item.model}
-                        </p>
-                        <div className="flex items-end justify-between gap-3">
-                          <p className={`text-sm font-semibold ${secondaryTextClass}`}>
-                            {item.year} | {mileageFormat.format(item.mileage)} km | {fuelLabel}
-                          </p>
-                          <div className="text-right">
-                            <p className={`text-lg font-bold leading-none ${primaryTextClass}`}>
-                              {priceText}
-                            </p>
-                            <p className={`mt-1 text-xs ${mutedTextClass}`}>
-                              {currency.format(item.price)}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {preset === "bottom-top-logo" && (
-                        <img
-                          src={logoSrc}
-                          alt="Logo"
-                          className="absolute right-3 top-3 h-8 max-w-[140px] object-contain object-right"
-                        />
-                      )}
-
-                      <div className="absolute inset-x-4 bottom-11">
-                        {preset === "all-bottom" && (
-                          <img src={logoSrc} alt="Logo" className="mb-2 h-8 max-w-[140px] object-contain object-left" />
-                        )}
-                        <p className={`line-clamp-2 text-xl font-bold leading-tight ${primaryTextClass}`}>
-                          {title}
-                        </p>
-                        <p className={`mt-1 text-base font-semibold ${secondaryTextClass}`}>
-                          {priceText}
-                        </p>
-                      </div>
-                    </>
+                  {/* Logo position is the only layout choice the dealer makes -- the bottom
+                      text block below (title / specs+pricing / disclaimer) never changes. */}
+                  {logoPosition === "left" && (
+                    <img
+                      src={logoSrc}
+                      alt="Logo"
+                      className="absolute left-3 top-3 h-8 max-w-[140px] object-contain object-left"
+                    />
+                  )}
+                  {logoPosition === "center" && (
+                    <img
+                      src={logoSrc}
+                      alt="Logo"
+                      className="absolute left-1/2 top-3 h-8 max-w-[140px] -translate-x-1/2 object-contain"
+                    />
+                  )}
+                  {logoPosition === "right" && (
+                    <img
+                      src={logoSrc}
+                      alt="Logo"
+                      className="absolute right-3 top-3 h-8 max-w-[140px] object-contain object-right"
+                    />
                   )}
 
-                  <div
-                    className={`absolute inset-x-0 bottom-0 flex h-7 items-center justify-between px-3 text-[0.6rem] font-semibold ${
-                      isDark ? "bg-black text-white" : "bg-white text-slate-900"
-                    }`}
+                  <div className="absolute inset-x-4 bottom-10 flex flex-col gap-1">
+                    <p className={`text-right text-lg font-bold leading-none ${primaryTextClass}`}>
+                      {priceText}
+                    </p>
+                    <p className={`line-clamp-2 text-2xl font-extrabold leading-tight ${primaryTextClass}`}>
+                      {title}
+                    </p>
+                    <div className="flex items-end justify-between gap-3">
+                      <p className={`truncate text-sm font-semibold ${secondaryTextClass}`}>
+                        {item.year} | {mileageFormat.format(item.mileage)} km | {fuelLabel}
+                      </p>
+                      <p className={`text-xs ${mutedTextClass}`}>{currency.format(item.price)}</p>
+                    </div>
+                  </div>
+
+                  <p
+                    className={`absolute inset-x-4 bottom-7 text-center text-[0.45rem] leading-tight ${mutedTextClass}`}
+                    style={{ opacity: 0.7 }}
                   >
-                    <span>Visítenos @drivetime</span>
+                    {DISCLAIMER_TEXT}
+                  </p>
+
+                  <div
+                    className={`absolute inset-x-0 bottom-0 flex h-7 items-center justify-center gap-2 px-3 text-[0.6rem] font-semibold ${
+                      isDark ? "text-white" : "text-slate-900"
+                    }`}
+                    style={{ backgroundColor: gradientColor }}
+                  >
+                    <span>Visítenos {instagramHandle}</span>
+                    <span>•</span>
                     <span>Link in Bio</span>
                   </div>
                 </div>
@@ -657,6 +676,16 @@ export function InstagramPostModal({
                 </div>
 
                 <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-slate-600">Instagram</label>
+                  <input
+                    value={instagramHandle}
+                    onChange={(e) => setInstagramHandle(e.target.value)}
+                    placeholder="@drivetime"
+                    className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus-visible:border-indigo-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-100"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-slate-600">Formato</label>
                   <div className="grid grid-cols-3 gap-2">
                     {FORMAT_OPTIONS.map((option) => (
@@ -677,27 +706,16 @@ export function InstagramPostModal({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-slate-600">Tono del degradado</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {GRADIENT_OPTIONS.map((option) => (
-                      <button
-                        key={option.id}
-                        type="button"
-                        onClick={() => setGradientTheme(option.id)}
-                        className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
-                          gradientTheme === option.id
-                            ? "border-indigo-500 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-100"
-                            : "border-slate-200 text-slate-600 hover:border-slate-300"
-                        }`}
-                      >
-                        <span
-                          className={`h-3 w-3 rounded-full border border-slate-300 ${
-                            option.id === "dark" ? "bg-slate-900" : "bg-white"
-                          }`}
-                        />
-                        {option.label}
-                      </button>
-                    ))}
+                  <label className="text-sm font-medium text-slate-600">Color del Degradado</label>
+                  <div className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2">
+                    <input
+                      type="color"
+                      value={gradientColor}
+                      onChange={(e) => setGradientColor(e.target.value)}
+                      aria-label="Color del degradado"
+                      className="h-9 w-14 cursor-pointer rounded-lg border border-slate-200 bg-white p-1"
+                    />
+                    <span className="text-sm font-medium text-slate-900">{gradientColor.toUpperCase()}</span>
                   </div>
                 </div>
 
@@ -733,29 +751,20 @@ export function InstagramPostModal({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-slate-600">Diseño</label>
+                  <label className="text-sm font-medium text-slate-600">Posición del Logo</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {PRESET_OPTIONS.map((option) => (
+                    {LOGO_POSITION_OPTIONS.map((option) => (
                       <button
                         key={option.id}
                         type="button"
-                        onClick={() => setPreset(option.id)}
-                        className={`flex flex-col items-center gap-2 rounded-xl border p-2 transition-colors ${
-                          preset === option.id
-                            ? "border-indigo-500 ring-2 ring-indigo-100"
-                            : "border-slate-200 hover:border-slate-300"
+                        onClick={() => setLogoPosition(option.id)}
+                        className={`rounded-xl border px-2 py-2 text-sm font-medium transition-colors ${
+                          logoPosition === option.id
+                            ? "border-indigo-500 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-100"
+                            : "border-slate-200 text-slate-600 hover:border-slate-300"
                         }`}
                       >
-                        <span className="relative aspect-square w-full overflow-hidden rounded-lg bg-slate-200">
-                          <span className="absolute inset-x-0 bottom-0 h-1/2 bg-slate-400/60" />
-                          <span
-                            className={`absolute h-2 w-4 rounded-sm bg-white ${PRESET_DOT_CLASS[option.id]}`}
-                          />
-                          <span className="absolute bottom-1 left-1 h-1 w-6 rounded-sm bg-white/90" />
-                        </span>
-                        <span className="text-[0.7rem] font-medium text-slate-600">
-                          {option.label}
-                        </span>
+                        {option.label}
                       </button>
                     ))}
                   </div>
